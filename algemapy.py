@@ -17,8 +17,19 @@ def load_template_file(template_file):
     return template
 
 
-def render_template(template_loaded):
-    template_vars = {}
+def render_template(template_loaded,
+                    job_name="algemapy.job",
+                    partition="long",
+                    nodes=1,
+                    ntasks_per_node=6,
+                    mem_per_cpu=24,
+                    node_list=None):
+    template_vars = {"job_name": job_name,
+                     "partition": "long",
+                     "nodes": 1,
+                     "ntasks_per_node": 6,
+                     "mem_per_cpu": 24,
+                     "node_list": None}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
 
@@ -36,6 +47,7 @@ def main():
                                                   Facilitates non-16S markers\
                                                   analysis.",
                                      version="testing")
+    headnode = parser.add_argument_group("headnode options")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
@@ -76,25 +88,6 @@ def main():
                           metavar="",
                           default=24,
                           help="number of logical processors. Default: <24>")
-    headnode.add_argument("--resources",
-                          action="store",
-                          dest="resources",
-                          metavar="",
-                          default=None,
-                          help="shortcut for headnode's resources\
-                                  reservation. Accepted values are: <S>mall,\
-                                  <M>edium, <L>arge, <XL>arge for regular nodes\
-                                  with mpi. <PHI> for single phi node, <JUMBO>\
-                                  for two phi nodes. Overrides all the other\
-                                  headnode arguments. Use if you are lazy.")
-    headnode.add_argument("--notify-email",
-                          action="store",
-                          dest="notify_email",
-                          metavar="",
-                          default=None,
-                          help="email address you want to notify when job is\
-                                  done.")
-
     args = parser.parse_args()
 
 
