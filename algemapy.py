@@ -12,6 +12,20 @@ __version = "testing"
 
 
 def load_template_file(template_file):
+    """
+    Load jinja2.environment.Template from HTML_Generator.template_file.
+    Search path absolute.
+
+    Parameters
+    -------
+    template_file: str
+        Name of the template file to load.
+
+    Returns
+    -------
+    jinja2.environment.Template
+        Loaded template, ready to be rendered.
+    """
     template_Loader = jj2.FileSystemLoader(searchpath="/")
     template_Env = jj2.Environment(loader=template_Loader)
     template = template_Env.get_template(template_file)
@@ -25,6 +39,34 @@ def render_template(template_loaded,
                     ntasks_per_node=6,
                     mem_per_cpu=24,
                     node_list=None):
+    """
+    Render previosuly loaded jinja2.environment.Template into str with passed
+    vars expanded.
+
+    Parameters
+    -------
+    template_loaded: loaded jinja2.environment.Template
+        jinja2 template, loaded by correctly into jinja2 environment.
+    job_name: str
+        Name that identifies your job in slurm. Also used for the project
+        identification by algemapy.
+    partition: str
+        Headnode's partition. Values: test, short, big, long, accel. Accel
+        necessary for phi/gpu nodes Default <long>.
+    nodes: int
+        Number of nodes. Default: <1>.
+    ntasks_per_node: int
+        Number of tasks to invoke on each node. Default <6>.
+    mem_per_cpu: int:
+        Maximum amount of real memory per node in gigabytes. Default <24>.
+    node_list: str
+        Request a specific list of nodes.
+
+    Returns
+    -------
+    str
+        Ready to be saved with regular file handle.
+    """
     template_vars = {"job_name": job_name,
                      "partition": "long",
                      "nodes": 1,
@@ -75,26 +117,20 @@ def main():
                           metavar="",
                           default=6,
                           help="number of tasks to invoke on each node.\
-                                  Default <6>")
+                                Default <6>")
     headnode.add_argument("--mem-per-cpu",
                           action="store",
                           dest="mem_per_cpu",
                           metavar="",
                           default=24,
                           help="maximum amount of real memory per node in\
-                                  gigabytes. Default <24>.")
+                                gigabytes. Default <24>.")
     headnode.add_argument("--node-list",
                           action="store",
                           dest="node_list",
                           metavar="",
                           default=None,
                           help="request a specific list of nodes")
-    headnode.add_argument("--processors",
-                          action="store",
-                          dest="processors",
-                          metavar="",
-                          default=24,
-                          help="number of logical processors. Default: <24>")
     args = parser.parse_args()
 
 
