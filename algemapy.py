@@ -132,6 +132,13 @@ def main():
                                                   analysis.",
                                      version="testing")
     headnode = parser.add_argument_group("headnode options")
+    parser.add_argument("-o",
+                        "--output",
+                        action="store",
+                        dest="output_file_name",
+                        metavar="",
+                        default="preproc.sh",
+                        help="output file name. Default <preproc.sh>.")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
@@ -167,6 +174,16 @@ def main():
                           default=None,
                           help="request a specific list of nodes")
     args = parser.parse_args()
+
+    loaded_templ = load_template_file("/home/darek/Pulpit/algemapy/preproc_template.sh.jj2")
+    rendered_templ = render_template(loaded_templ,
+                                     partition=args.partition,
+                                     nodes=args.nodes,
+                                     ntasks_per_node=args.ntasks_per_node,
+                                     mem_per_cpu=args.mem_per_cpu,
+                                     node_list=args.node_list)
+    save_template(args.output_file_name,
+                  rendered_templ)
 
 
 if __name__ == '__main__':
