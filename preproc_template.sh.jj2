@@ -7,3 +7,4 @@
 #SBATCH --mem-per-cpu={{mem_per_cpu}}
 {% if node_list != None %}
 #SBATCH --nodelist={{node_list}}
+{% endif %}
