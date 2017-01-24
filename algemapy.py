@@ -6,6 +6,10 @@ import argparse
 import os
 
 
+__author__ = "Dariusz Izak IBB PAS"
+__version = "testing"
+
+
 def load_template_file(template_file):
     template_Loader = jj2.FileSystemLoader(searchpath="/")
     template_Env = jj2.Environment(loader=template_Loader)
@@ -23,10 +27,6 @@ def save_template(out_file_name,
                   template_rendered):
     with open(out_file_name, "w") as fout:
         fout.write(template_rendered)
-
-
-__author__ = "Dariusz Izak IBB PAS"
-__version = "testing"
 
 
 def main():
