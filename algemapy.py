@@ -175,7 +175,7 @@ def main():
                           help="request a specific list of nodes")
     args = parser.parse_args()
 
-    loaded_templ = load_template_file("/home/darek/Pulpit/algemapy/preproc_template.sh.jj2")
+    loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
                                      partition=args.partition,
                                      nodes=args.nodes,
