@@ -1,0 +1,9 @@
+#!/bin/bash
+
+#SBATCH --job-name="{{job_name}}"
+#SBATCH --partition={{partition}}
+#SBATCH --nodes={{nodes}}
+#SBATCH --ntasks-per-node={{ntasks_per_node}}
+#SBATCH --mem-per-cpu={{mem_per_cpu}}
+{% if node_list != None %}
+#SBATCH --nodelist={{node_list}}
