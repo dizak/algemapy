@@ -4,6 +4,7 @@
 import jinja2 as jj2
 import argparse
 import os
+import sys
 
 
 __author__ = "Dariusz Izak IBB PAS"
@@ -38,6 +39,12 @@ def save_template(out_file_name,
                   template_rendered):
     with open(out_file_name, "w") as fout:
         fout.write(template_rendered)
+
+
+def get_prog_folder_path(file_name=""):
+    prog_path = sys.argv[0].replace(sys.argv[0].split("/")[-1],
+                                    file_name)
+    return prog_path
 
 
 def main():
