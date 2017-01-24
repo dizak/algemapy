@@ -30,7 +30,13 @@ __version = "testing"
 
 
 def main():
-    pass
+    parser = argparse.ArgumentParser(prog="algemapy",
+                                     usage="algemapy.py [OPTION]",
+                                     description="ALternativeGEnomicMAppingPYpeline.\
+                                                  Facilitates non-16S markers\
+                                                  analysis.",
+                                     version="testing")
+    args = parser.parse_args()
 
 
 if __name__ == '__main__':
