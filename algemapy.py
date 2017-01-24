@@ -81,9 +81,44 @@ def save_template(out_file_name,
                   template_rendered):
     with open(out_file_name, "w") as fout:
         fout.write(template_rendered)
+    """
+    Save jinja2 template rendered into str with regular file handle.
+
+    Parameters
+    -------
+    out_file_name: str
+        Output file name.
+    template_rendered: str
+        jinja2 template rendered into str.
+    """
 
 
-def get_prog_folder_path(file_name=""):
+def get_dir_path(file_name=""):
+    """
+    Find out what is the script system path and return its location. Optionally
+    put desired file name at the end of the path. Facilitates access to files
+    stored in the same directory as executed script. Requires the executed
+    script being added to the system path
+
+    Parameters
+    --------
+    file_name: str
+        File name to put at the end of the path. Use empty string if want just
+        the directory.
+
+    Returns
+    --------
+    str
+        System path of the executable.
+
+    Examples
+    -------
+        >>> get_dir_path()
+        '/home/user/program/bin/'
+
+        >>> get_dir_path("foo")
+        '/home/user/program/bin/foo'
+    """
     prog_path = sys.argv[0].replace(sys.argv[0].split("/")[-1],
                                     file_name)
     return prog_path
