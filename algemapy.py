@@ -49,20 +49,22 @@ def render_template(template_loaded,
     -------
     template_loaded: loaded jinja2.environment.Template
         jinja2 template, loaded by correctly into jinja2 environment.
-    job_name: str
+    job_name: str, default <algemapy.job>
         Name that identifies your job in slurm. Also used for the project
         identification by algemapy.
-    partition: str
+    partition: str, default <long>
         Headnode's partition. Values: test, short, big, long, accel. Accel
-        necessary for phi/gpu nodes Default <long>.
-    nodes: int
-        Number of nodes. Default: <1>.
-    ntasks_per_node: int
-        Number of tasks to invoke on each node. Default <6>.
-    mem_per_cpu: int:
-        Maximum amount of real memory per node in gigabytes. Default <24>.
-    node_list: str
+        necessary for phi/gpu nodes.
+    nodes: int, default <1>
+        Number of nodes.
+    ntasks_per_node: int, default <6>
+        Number of tasks to invoke on each node.
+    mem_per_cpu: int, default <24>
+        Maximum amount of real memory per node in gigabytes.
+    node_list: str, default <None>
         Request a specific list of nodes.
+    reads: list of two-element tuple/list, default <None>
+        Reads file names that will be assembled by flash.
 
     Returns
     -------
@@ -105,7 +107,7 @@ def get_dir_path(file_name=""):
 
     Parameters
     --------
-    file_name: str
+    file_name: str, default <"">
         File name to put at the end of the path. Use empty string if want just
         the directory.
 
@@ -218,6 +220,16 @@ def main():
                         metavar="",
                         default="preproc.sh",
                         help="Output file name. Default <preproc.sh>.")
+    parser.add_argument("-r",
+                        "--run",
+                        action="store",
+                        dest="run",
+                        metavar="",
+                        default=None,
+                        help="shell call. Use if you want to run the mothur\
+                                script immediately, in current directory.\
+                                eg -r sh for regular bash or -r sbatch for\
+                                slurm.")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
@@ -268,7 +280,10 @@ def main():
                                      reads=reads)
     save_template(args.output_file_name,
                   rendered_templ)
-
+    if args.run is not None:
+        os.system("{0} {1}".format(args.run, args.output_file_name))
+    else:
+        pass
 
 if __name__ == '__main__':
     main()
