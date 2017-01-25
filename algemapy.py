@@ -134,7 +134,7 @@ def left_n_right_generator(files_directory=".",
                            files_extension="fastq",
                            left_reads_sign="R1",
                            right_reads_sign="R2",
-                           one_side_only=""):
+                           return_only=""):
     """
     Align corresponding file names containing the extension of interest in a
     given directory. Extract parts of the file names to use as IDs.
@@ -151,16 +151,16 @@ def left_n_right_generator(files_directory=".",
         File names with this are recognized as left.
     right_reads_sign: str, default <R2>
         File names with this are recognized as right.
-    one_side_only: str, default <"">
+    return_only: str, default <"">
         Return file names recognized as left only if <left>. Return file names
-        recognized as right only if <right>.
+        recognized as right only if <right>. Return IDs only if <name>
 
     Returns
     -------
     dict of lists of dicts of str
         If containing IDs.
     list of str
-        If one_side_only set to <left> or <right>.
+        If return_only set to <left>, <right> or <name>.
 
     Examples
     -------
@@ -172,7 +172,7 @@ def left_n_right_generator(files_directory=".",
                {'name': 'F3D0', 'right_reads': 'F3D0_S188_L001_R2_001.fastq'},
                {'name': 'F3D3', 'right_reads': 'F3D3_S191_L001_R2_001.fastq'}]}
 
-    >>> left_n_right_generator("/home/user/data/", one_side_only="left")
+    >>> left_n_right_generator("/home/user/data/", return_only="left")
     ['F3D1_S189_L001_R1_001.fastq',
      'F3D0_S188_L001_R1_001.fastq',
      'F3D3_S191_L001_R1_001.fastq']
@@ -193,10 +193,12 @@ def left_n_right_generator(files_directory=".",
                 pass
     name_reads = {"left": left_name_reads_list,
                   "right": right_name_reads_list}
-    if one_side_only == "left":
+    if return_only == "left":
         return [i["left_reads"] for i in name_reads["left"]]
-    elif one_side_only == "right":
+    elif return_only == "right":
         return [i["right_reads"] for i in name_reads["right"]]
+    elif return_only == "name":
+        return [i["name"] for i in name_reads["left"]]
     else:
         return name_reads
 
@@ -267,9 +269,11 @@ def main():
     args = parser.parse_args()
 
     reads = zip(left_n_right_generator(args.files_directory,
-                                       one_side_only="left"),
+                                       return_only="name"),
                 left_n_right_generator(args.files_directory,
-                                       one_side_only="right"))
+                                       return_only="left"),
+                left_n_right_generator(args.files_directory,
+                                       return_only="right"))
     loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
                                      partition=args.partition,
