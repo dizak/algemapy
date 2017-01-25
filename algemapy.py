@@ -39,7 +39,8 @@ def render_template(template_loaded,
                     nodes=1,
                     ntasks_per_node=6,
                     mem_per_cpu=24,
-                    node_list=None):
+                    node_list=None,
+                    reads=None):
     """
     Render previosuly loaded jinja2.environment.Template into str with passed
     vars expanded.
@@ -73,7 +74,8 @@ def render_template(template_loaded,
                      "nodes": 1,
                      "ntasks_per_node": 6,
                      "mem_per_cpu": 24,
-                     "node_list": None}
+                     "node_list": None,
+                     "reads": reads}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
 
@@ -205,19 +207,23 @@ def main():
                                                   analysis.",
                                      version="testing")
     headnode = parser.add_argument_group("headnode options")
+    parser.add_argument(action="store",
+                        dest="files_directory",
+                        metavar="",
+                        help="Input directory path.")
     parser.add_argument("-o",
                         "--output",
                         action="store",
                         dest="output_file_name",
                         metavar="",
                         default="preproc.sh",
-                        help="output file name. Default <preproc.sh>.")
+                        help="Output file name. Default <preproc.sh>.")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
                           metavar="",
                           default="long",
-                          help="headnode's partition. Values: test, short, big,\
+                          help="Headnode's partition. Values: test, short, big,\
                                   long, accel. Accel necessary for phi/gpu nodes\
                                   Default <long>.")
     headnode.add_argument("--nodes",
@@ -225,36 +231,41 @@ def main():
                           dest="nodes",
                           metavar="",
                           default=1,
-                          help="number of nodes. Default: <1>.")
+                          help="Number of nodes. Default: <1>.")
     headnode.add_argument("--ntasks-per-node",
                           action="store",
                           dest="ntasks_per_node",
                           metavar="",
                           default=6,
-                          help="number of tasks to invoke on each node.\
-                                Default <6>")
+                          help="Number of tasks to invoke on each node.\
+                                Default <6>.")
     headnode.add_argument("--mem-per-cpu",
                           action="store",
                           dest="mem_per_cpu",
                           metavar="",
                           default=24,
-                          help="maximum amount of real memory per node in\
+                          help="Maximum amount of real memory per node in\
                                 gigabytes. Default <24>.")
     headnode.add_argument("--node-list",
                           action="store",
                           dest="node_list",
                           metavar="",
                           default=None,
-                          help="request a specific list of nodes")
+                          help="Request a specific list of nodes.")
     args = parser.parse_args()
 
+    reads = zip(left_n_right_generator(args.files_directory,
+                                       one_side_only="left"),
+                left_n_right_generator(args.files_directory,
+                                       one_side_only="right"))
     loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
                                      partition=args.partition,
                                      nodes=args.nodes,
                                      ntasks_per_node=args.ntasks_per_node,
                                      mem_per_cpu=args.mem_per_cpu,
-                                     node_list=args.node_list)
+                                     node_list=args.node_list,
+                                     reads=reads)
     save_template(args.output_file_name,
                   rendered_templ)
 
