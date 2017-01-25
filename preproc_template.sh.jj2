@@ -8,3 +8,7 @@
 {% if node_list != None %}
 #SBATCH --nodelist={{node_list}}
 {% endif %}
+### Reads assembly by FLASH ###
+{% for i in reads %}
+  flash {{i[0]}} {{i[1]}}
+{% endfor %}
