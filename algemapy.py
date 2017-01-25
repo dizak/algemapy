@@ -5,6 +5,7 @@ import jinja2 as jj2
 import argparse
 import os
 import sys
+import pandas as pd
 
 
 __author__ = "Dariusz Izak IBB PAS"
@@ -113,15 +114,87 @@ def get_dir_path(file_name=""):
 
     Examples
     -------
-        >>> get_dir_path()
-        '/home/user/program/bin/'
+    >>> get_dir_path()
+    '/home/user/program/bin/'
 
-        >>> get_dir_path("foo")
-        '/home/user/program/bin/foo'
+    >>> get_dir_path("foo")
+    '/home/user/program/bin/foo'
     """
     prog_path = sys.argv[0].replace(sys.argv[0].split("/")[-1],
                                     file_name)
     return prog_path
+
+
+def left_n_right_generator(files_directory=".",
+                           split_sign="_",
+                           files_extension="fastq",
+                           left_reads_sign="R1",
+                           right_reads_sign="R2",
+                           one_side_only=""):
+    """
+    Align corresponding file names containing the extension of interest in a
+    given directory. Extract parts of the file names to use as IDs.
+
+    Parameters
+    -------
+    files_directory: str, default <.>
+        Directory to read the file names from.
+    split_sign: str, default <_>
+        Characters before this are recognized as IDs.
+    files_extension: str, default <fastq>
+        Only files with this extension are recognized.
+    left_reads_sign: str, default <R1>
+        File names with this are recognized as left.
+    right_reads_sign: str, default <R2>
+        File names with this are recognized as right.
+    one_side_only: str, default <"">
+        Return file names recognized as left only if <left>. Return file names
+        recognized as right only if <right>.
+
+    Returns
+    -------
+    dict of lists of dicts of str
+        If containing IDs.
+    list of str
+        If one_side_only set to <left> or <right>.
+
+    Examples
+    -------
+    >>> left_n_right_generator("/home/user/data/")
+    {'left': [{'left_reads': 'F3D1_S189_L001_R1_001.fastq', 'name': 'F3D1'},
+              {'left_reads': 'F3D0_S188_L001_R1_001.fastq', 'name': 'F3D0'},
+              {'left_reads': 'F3D3_S191_L001_R1_001.fastq', 'name': 'F3D3'},
+     'right': [{'name': 'F3D1', 'right_reads': 'F3D1_S189_L001_R2_001.fastq'},
+               {'name': 'F3D0', 'right_reads': 'F3D0_S188_L001_R2_001.fastq'},
+               {'name': 'F3D3', 'right_reads': 'F3D3_S191_L001_R2_001.fastq'}]}
+
+    >>> left_n_right_generator("/home/user/data/", one_side_only="left")
+    ['F3D1_S189_L001_R1_001.fastq',
+     'F3D0_S188_L001_R1_001.fastq',
+     'F3D3_S191_L001_R1_001.fastq']
+    """
+    left_name_reads_list = []
+    right_name_reads_list = []
+    files_list = os.listdir(files_directory)
+    files_list = [i for i in files_list if files_extension == i.split(".")[-1]]
+    sample_names_list = [i.split(split_sign)[0] for i in files_list]
+    sample_names_list = list(set(sample_names_list))
+    for i in sample_names_list:
+        for ii in files_list:
+            if i == ii.split(split_sign)[0] and left_reads_sign in ii:
+                left_name_reads_list.append({"name": i, "left_reads": ii})
+            elif i == ii.split(split_sign)[0] and right_reads_sign in ii:
+                right_name_reads_list.append({"name": i, "right_reads": ii})
+            else:
+                pass
+    name_reads = {"left": left_name_reads_list,
+                  "right": right_name_reads_list}
+    if one_side_only == "left":
+        return [i["left_reads"] for i in name_reads["left"]]
+    elif one_side_only == "right":
+        return [i["right_reads"] for i in name_reads["right"]]
+    else:
+        return name_reads
 
 
 def main():
