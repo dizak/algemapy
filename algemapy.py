@@ -207,7 +207,7 @@ def left_n_right_generator(files_directory=".",
 def fastq2fasta(files_directory):
     fastq_files = glob.glob("{0}/*extendedFrags.fastq".format(files_directory))
     for i in fastq_files:
-        SeqIO.convert(i, "genbank", i.replace("fastq", "fasta"), "fasta")
+        SeqIO.convert(i, "fastq", i.replace("fastq", "fasta"), "fasta")
 
 
 def main():
