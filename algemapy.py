@@ -5,7 +5,8 @@ import jinja2 as jj2
 import argparse
 import os
 import sys
-import pandas as pd
+import glob
+from Bio import SeqIO
 
 
 __author__ = "Dariusz Izak IBB PAS"
@@ -203,6 +204,12 @@ def left_n_right_generator(files_directory=".",
         return name_reads
 
 
+def fastq2fasta(files_directory):
+    fastq_files = glob.glob("{0}/*extendedFrags.fastq".format(files_directory))
+    for i in fastq_files:
+        SeqIO.convert(i, "genbank", i.replace("fastq", "fasta"), "fasta")
+
+
 def main():
     parser = argparse.ArgumentParser(prog="algemapy",
                                      usage="algemapy.py [OPTION]",
@@ -211,6 +218,7 @@ def main():
                                                   analysis.",
                                      version="testing")
     headnode = parser.add_argument_group("headnode options")
+    convert = parser.add_argument_group("format conversion options")
     parser.add_argument(action="store",
                         dest="files_directory",
                         metavar="",
@@ -228,10 +236,15 @@ def main():
                         dest="run",
                         metavar="",
                         default=None,
-                        help="shell call. Use if you want to run the mothur\
+                        help="Shell call. Use if you want to run the mothur\
                                 script immediately, in current directory.\
                                 eg -r sh for regular bash or -r sbatch for\
                                 slurm.")
+    convert.add_argument("--fastq-to-fasta",
+                         action="store_true",
+                         dest="fastq_to_fasta",
+                         help="Convert all fastq files in given directory to\
+                               fasta.")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
@@ -268,6 +281,11 @@ def main():
                           help="Request a specific list of nodes.")
     args = parser.parse_args()
 
+    if args.fastq_to_fasta is True:
+        fastq2fasta(args.files_directory)
+        quit()
+    else:
+        pass
     reads = zip(left_n_right_generator(args.files_directory,
                                        return_only="name"),
                 left_n_right_generator(args.files_directory,
