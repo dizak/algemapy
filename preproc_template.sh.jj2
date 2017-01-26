@@ -24,3 +24,5 @@ echo 'Aligning...'
 mafft {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
 {% endfor %}
 echo 'DONE!'
+
+headnode_notifier.py {{notify_email}} --subject '{{job_name}} has finished'
