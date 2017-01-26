@@ -278,11 +278,6 @@ def main():
                                 script immediately, in current directory.\
                                 eg -r sh for regular bash or -r sbatch for\
                                 slurm.")
-    convert.add_argument("--fastq-to-fasta",
-                         action="store_true",
-                         dest="fastq_to_fasta",
-                         help="Convert all fastq files in given directory to\
-                               fasta.")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
@@ -319,11 +314,6 @@ def main():
                           help="Request a specific list of nodes.")
     args = parser.parse_args()
 
-    if args.fastq_to_fasta is True:
-        fastq2fasta(args.files_directory)
-        quit()
-    else:
-        pass
     reads = zip(left_n_right_generator(args.files_directory,
                                        return_only="name"),
                 left_n_right_generator(args.files_directory,
