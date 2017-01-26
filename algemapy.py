@@ -36,6 +36,7 @@ def load_template_file(template_file):
 
 
 def render_template(template_loaded,
+                    notify_email = None,
                     job_name="algemapy.job",
                     partition="long",
                     nodes=1,
@@ -73,7 +74,8 @@ def render_template(template_loaded,
     str
         Ready to be saved with regular file handle.
     """
-    template_vars = {"job_name": job_name,
+    template_vars = {"notify_email": notify_email,
+                     "job_name": job_name,
                      "partition": "long",
                      "nodes": 1,
                      "ntasks_per_node": 6,
@@ -224,6 +226,13 @@ def main():
                         metavar="",
                         default="preproc.sh",
                         help="Output file name. Default <preproc.sh>.")
+    parser.add_argument("--notify-email",
+                        action="store",
+                        dest="notify_email",
+                        metavar="",
+                        default=None,
+                        help="Email address you want to notify when job is\
+                              done.")
     parser.add_argument("-r",
                         "--run",
                         action="store",
@@ -278,6 +287,7 @@ def main():
                                        return_only="right"))
     loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
+                                     notify_email=args.notify_email,
                                      partition=args.partition,
                                      nodes=args.nodes,
                                      ntasks_per_node=args.ntasks_per_node,
