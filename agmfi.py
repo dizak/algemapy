@@ -41,6 +41,7 @@ def find_stop_codons(threshold,
 
 def conv_n_filter(files_directory,
                   glob_path="*extendedFrags.fastq",
+                  output_path = ".",
                   max_stop_codons=3,
                   multiprocessing=False):
     def f(i):
@@ -49,7 +50,7 @@ def conv_n_filter(files_directory,
         filtered = find_stop_codons(threshold=max_stop_codons,
                                     records=records_list)
         file_name_fasta = "{0}.fasta".format(".".join(i.split("/")[-1].split(".")[:-1]))
-        with open(file_name_fasta, "w") as fout:
+        with open("{0}/{1}".format(output_path, file_name_fasta), "w") as fout:
             SeqIO.write(filtered, fout, format="fasta")
         print "DONE!"
     input_files = glob.glob("{0}/{1}".format(files_directory, glob_path))
@@ -80,7 +81,8 @@ def main():
                         directory")
     args = parser.parse_args()
 
-    conv_n_filter(args.files_directory)
+    conv_n_filter(files_directory=args.files_directory,
+                  output_path=args.output_path)
 
 if __name__ == '__main__':
     main()
