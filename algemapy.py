@@ -246,12 +246,6 @@ def conv_n_filter(files_directory,
         print "DONE!"
 
 
-def fastq2fasta(files_directory):
-    fastq_files = glob.glob("{0}/*extendedFrags.fastq".format(files_directory))
-    for i in fastq_files:
-        SeqIO.convert(i, "fastq", i.replace("fastq", "fasta"), "fasta")
-
-
 def main():
     parser = argparse.ArgumentParser(prog="algemapy",
                                      usage="algemapy.py [OPTION]",
