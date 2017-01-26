@@ -211,18 +211,10 @@ def find_stop_codons(threshold,
     below_thr = []
     above_thr = []
     for i in tqdm(records):
-        all_ORFs = [i.seq[0:].translate(table=11),
-                    i.seq[1:].translate(table=11),
-                    i.seq[2:].translate(table=11),
-                    i.seq.reverse_complement()[0:].translate(table=11),
-                    i.seq.reverse_complement()[1:].translate(table=11),
-                    i.seq.reverse_complement()[2:].translate(table=11)]
-        if (all_ORFs[0].count("*") > threshold and
-            all_ORFs[1].count("*") > threshold and
-            all_ORFs[2].count("*") > threshold and
-            all_ORFs[3].count("*") > threshold and
-            all_ORFs[4].count("*") > threshold and
-                all_ORFs[5].count("*") > threshold):
+        fr_ORFs = [i.seq[x:].translate(table=11) for x in range(3)]
+        rv_ORFs = [i.seq.reverse_complement()[x:].translate(table=11) for x in range(3)]
+        all_ORFs = fr_ORFs + rv_ORFs
+        if all(all_ORFs[x].count("*") > threshold for x in range(6)):
             below_thr.append(i)
         else:
             above_thr.append(i)
