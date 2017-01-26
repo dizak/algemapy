@@ -7,6 +7,7 @@ import os
 import sys
 import glob
 from Bio import SeqIO
+from tqdm import tqdm
 
 
 __author__ = "Dariusz Izak IBB PAS"
@@ -202,6 +203,47 @@ def left_n_right_generator(files_directory=".",
         return [i["name"] for i in name_reads["left"]]
     else:
         return name_reads
+
+
+def find_stop_codons(threshold,
+                     records,
+                     below_threshold=False):
+    below_thr = []
+    above_thr = []
+    for i in tqdm(records):
+        all_ORFs = [i.seq[0:].translate(table=11),
+                    i.seq[1:].translate(table=11),
+                    i.seq[2:].translate(table=11),
+                    i.seq.reverse_complement()[0:].translate(table=11),
+                    i.seq.reverse_complement()[1:].translate(table=11),
+                    i.seq.reverse_complement()[2:].translate(table=11)]
+        if (all_ORFs[0].count("*") > threshold and
+            all_ORFs[1].count("*") > threshold and
+                all_ORFs[2].count("*") > threshold):
+            below_thr.append(i)
+        else:
+            above_thr.append(i)
+    if below_threshold is True:
+        print "{} reads left".format(len(below_thr))
+        return below_thr
+    else:
+        print "{} reads left".format(len(above_thr))
+        return above_thr
+
+
+def conv_n_filter(files_directory,
+                  glob_path="extendedFrags.fastq",
+                  max_stop_codons=3):
+    for i in glob.glob("{0}/*fastq".format(files_directory)):
+        print "Processing {}...".format(i)
+        records_list = list(SeqIO.parse(i, format="fastq"))
+        filtered = find_stop_codons(threshold=max_stop_codons,
+                                    records=records_list)
+        with open("{0}.test.fasta".format(i), "w") as fout:
+            SeqIO.write(filtered,
+                        fout,
+                        format="fasta")
+        print "DONE!"
 
 
 def fastq2fasta(files_directory):
