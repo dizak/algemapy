@@ -53,3 +53,22 @@ def conv_n_filter(files_directory,
                         fout,
                         format="fasta")
         print "DONE!"
+
+
+def main():
+    parser = argparse.ArgumentParser(prog="agmfi",
+                                     usage="agmfi.py [OPTION]",
+                                     description="Part of \
+                                     ALternativeGEnomicMAppingPYpeline.\
+                                     Holds algemapy built-in filtering.",
+                                     version="testing")
+    parser.add_argument(action="store",
+                        dest="files_directory",
+                        metavar="",
+                        help="Input directory path.")
+    args = parser.parse_args()
+
+    conv_n_filter(args.files_directory)
+
+if __name__ == '__main__':
+    main()
