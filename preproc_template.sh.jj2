@@ -9,14 +9,18 @@
 #SBATCH --nodelist={{node_list}}
 {% endif %}
 ### Reads assembly by FLASH ###
+echo 'Assembling...'
 {% for i in reads %}
 flash {{i[1]}} {{i[2]}} -o {{i[0]}}
 {% endfor %}
+echo 'DONE!'
 ### ORF filtering ###
-
+echo 'ORFs filtering...'
 agmfi.py .
-
+echo 'DONE!'
 ### MAFFT alignment ###
+echo 'Aligning...'
 {% for i in reads %}
 mafft {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
 {% endfor %}
+echo 'DONE!'
