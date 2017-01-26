@@ -41,7 +41,7 @@ def find_stop_codons(threshold,
 
 def conv_n_filter(files_directory,
                   glob_path="*extendedFrags.fastq",
-                  output_path = ".",
+                  output_path=".",
                   max_stop_codons=3,
                   multiprocessing=False):
     def f(i):
