@@ -232,9 +232,9 @@ def find_stop_codons(threshold,
 
 
 def conv_n_filter(files_directory,
-                  glob_path="extendedFrags.fastq",
+                  glob_path="*extendedFrags.fastq",
                   max_stop_codons=3):
-    for i in glob.glob("{0}/*fastq".format(files_directory)):
+    for i in glob.glob("{0}/{1}".format(files_directory, glob_path)):
         print "Processing {}...".format(i)
         records_list = list(SeqIO.parse(i, format="fastq"))
         filtered = find_stop_codons(threshold=max_stop_codons,
