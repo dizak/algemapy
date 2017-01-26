@@ -219,7 +219,10 @@ def find_stop_codons(threshold,
                     i.seq.reverse_complement()[2:].translate(table=11)]
         if (all_ORFs[0].count("*") > threshold and
             all_ORFs[1].count("*") > threshold and
-                all_ORFs[2].count("*") > threshold):
+            all_ORFs[2].count("*") > threshold and
+            all_ORFs[3].count("*") > threshold and
+            all_ORFs[4].count("*") > threshold and
+                all_ORFs[5].count("*") > threshold):
             below_thr.append(i)
         else:
             above_thr.append(i)
@@ -245,7 +248,8 @@ def conv_n_filter(files_directory,
         records_list = list(SeqIO.parse(i, format="fastq"))
         filtered = find_stop_codons(threshold=max_stop_codons,
                                     records=records_list)
-        with open("{0}.test.fasta".format(i), "w") as fout:
+        file_name_fasta = "{0}.fasta".format(".".join(i.split("/")[-1].split(".")[:-1]))
+        with open(file_name_fasta, "w") as fout:
             SeqIO.write(filtered,
                         fout,
                         format="fasta")
