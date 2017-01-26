@@ -256,7 +256,6 @@ def main():
                                                   analysis.",
                                      version="testing")
     headnode = parser.add_argument_group("headnode options")
-    convert = parser.add_argument_group("format conversion options")
     parser.add_argument(action="store",
                         dest="files_directory",
                         metavar="",
