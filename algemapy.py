@@ -224,10 +224,16 @@ def find_stop_codons(threshold,
         else:
             above_thr.append(i)
     if below_threshold is True:
-        print "{} reads left".format(len(below_thr))
+        print "{0} reads left".format(len(below_thr))
+        print "{0} reads removed ({1}%)".format(len(above_thr),
+                                                (len(above_thr) * 100 /
+                                                 len(below_thr)))
         return below_thr
     else:
-        print "{} reads left".format(len(above_thr))
+        print "{0} reads left".format(len(above_thr))
+        print "{0} reads removed ({1}%)".format(len(below_thr),
+                                                (len(below_thr) * 100 /
+                                                 len(above_thr)))
         return above_thr
 
 
