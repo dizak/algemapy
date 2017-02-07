@@ -36,7 +36,7 @@ def load_template_file(template_file):
 
 
 def render_template(template_loaded,
-                    notify_email = None,
+                    notify_email=None,
                     job_name="algemapy.job",
                     partition="long",
                     nodes=1,
