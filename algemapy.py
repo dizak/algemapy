@@ -133,6 +133,46 @@ def get_dir_path(file_name=""):
     return prog_path
 
 
+def sanitize_names(file_path,
+                   unwanted_char=":",
+                   wanted_char="_"):
+    """
+    Remove unwanted characters from read names. Reads are recognized as
+    lines starting with <>> character. Uses simplests possible built-in methods.
+
+    Parameters
+    -------
+    file_path: str
+        Path to input file.
+    unwanted_char: str
+        Charater to remove.
+    wanted_char: str
+        Charater to replace unwanted_char with.
+
+    Returns
+    -------
+    list of str
+        Sanitized input file content as list of lines.
+
+    Examples
+    -------
+    >>> sanitized = sanitize_names("/path/to/your/file",
+                                   unwanted_char=":",
+                                   wanted_char="_")
+    >>> sanitized[0]
+    '>M00967_43_000000000-A3JHG_1_1101_10551_7682 1_N_0_188\n'
+    """
+    corrected_file = []
+    with open(file_path) as fin:
+        for i in fin.readlines():
+            if i.startswith(">"):
+                i = i.replace(unwanted_char, wanted_char)
+            else:
+                pass
+            corrected_file.append(i)
+    return corrected_file
+
+
 def left_n_right_generator(files_directory=".",
                            split_sign="_",
                            files_extension="fastq",
@@ -300,6 +340,7 @@ def main():
         os.system("{0} {1}".format(args.run, args.output_file_name))
     else:
         pass
+
 
 if __name__ == '__main__':
     main()
