@@ -131,6 +131,20 @@ def get_dir_path(file_name=""):
     return prog_path
 
 
+def sanitize_names(file_path,
+                   unwanted_char=":",
+                   wanted_char="_"):
+    corrected_file = []
+    with open(file_path) as fin:
+        for i in fin.readlines():
+            if i.startswith(">"):
+                i = i.replace(unwanted_char, wanted_char)
+            else:
+                pass
+            corrected_file.append(i)
+    return corrected_file
+
+
 def left_n_right_generator(files_directory=".",
                            split_sign="_",
                            files_extension="fastq",
