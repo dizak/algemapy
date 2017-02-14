@@ -26,7 +26,7 @@ echo 'Aligning...'
 ### RAxML tree construction ###
 echo 'Building tree...'
 {% for i in reads %}
-  raxmlHPC -m GTRGAMMA -p 12345 -s {{i[0]}}.mafft -# 20 -n {{job_name}}_{{i[0]}}
+  raxmlHPC-PTHREADS -T {{processors}} -m GTRGAMMA -p 12345 -s {{i[0]}}.mafft -# 20 -n {{job_name}}_{{i[0]}}
   mothulity_draw.py --tree RAxML_bestTree.{{job_name}}_{{i[0]}}
   headnode_notifier.py {{notify_email}} --subject 'Tree RAxML_bestTree.{{job_name}}_{{i[0]}}' --attach RAxML_bestTree.{{job_name}}_{{i[0]}}.svg
 {% endfor %}
