@@ -12,7 +12,8 @@ __author__ = "Dariusz Izak IBB PAS"
 __version = "testing"
 
 
-def sanitize_names(file_path,
+def sanitize_names(input_file_name,
+                   output_file_name,
                    leading_char="@",
                    unwanted_char=":",
                    wanted_char="_"):
@@ -22,7 +23,7 @@ def sanitize_names(file_path,
 
     Parameters
     -------
-    file_path: str
+    input_file_name: str
         Path to input file.
     unwanted_char: str
         Charater to remove.
@@ -43,15 +44,14 @@ def sanitize_names(file_path,
     '>M00967_43_000000000-A3JHG_1_1101_10551_7682 1_N_0_188\n'
     """
     corrected_file = []
-    corrected_name = "{0}.corr.fastq".format(file_path)
-    with open(file_path) as fin:
+    with open(input_file_name) as fin:
         for i in fin.readlines():
             if i.startswith(leading_char):
                 i = i.replace(unwanted_char, wanted_char)
             else:
                 pass
             corrected_file.append(i)
-    with open(corrected_name, "w") as fout:
+    with open(output_file_name, "w") as fout:
         fout.writelines(corrected_file)
 
 
@@ -98,8 +98,10 @@ def conv_n_filter(files_directory,
         print "DONE!"
     input_files = glob.glob("{0}/{1}".format(files_directory, glob_path))
     if multiprocessing is True:
+        ptmp.ProcessPool().map(sanitize_names, input_files)
         ptmp.ProcessingPool().map(f, input_files)
     for i in input_files:
+        sanitize_names(i, i)
         f(i)
 
 
