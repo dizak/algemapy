@@ -21,7 +21,14 @@ echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
 {% for i in reads %}
-mafft {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
+  mafft {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
+{% endfor %}
+### RAxML tree construction ###
+echo 'Building tree...'
+{% for i in reads %}
+  raxmlHPC -m GTRGAMMA -p 12345 -s {{i[0]}}.mafft -# 20 -n {{job_name}}_{{i[0]}}
+  mothulity_draw.py --tree RAxML_bestTree.{{job_name}}_{{i[0]}}
+  headnode_notifier.py {{notify_email}} --subject 'Tree RAxML_bestTree.{{job_name}}_{{i[0]}}' --attach RAxML_bestTree.{{job_name}}_{{i[0]}}.svg
 {% endfor %}
 echo 'DONE!'
 {% if notify_email != None %}
