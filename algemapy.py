@@ -134,6 +134,7 @@ def get_dir_path(file_name=""):
 
 
 def sanitize_names(file_path,
+                   leading_char="@",
                    unwanted_char=":",
                    wanted_char="_"):
     """
@@ -163,14 +164,16 @@ def sanitize_names(file_path,
     '>M00967_43_000000000-A3JHG_1_1101_10551_7682 1_N_0_188\n'
     """
     corrected_file = []
+    corrected_name = "{0}.corr.fastq".format(file_path)
     with open(file_path) as fin:
         for i in fin.readlines():
-            if i.startswith(">"):
+            if i.startswith(leading_char):
                 i = i.replace(unwanted_char, wanted_char)
             else:
                 pass
             corrected_file.append(i)
-    return corrected_file
+    with open(corrected_name, "w") as fout:
+        fout.writelines(corrected_file)
 
 
 def left_n_right_generator(files_directory=".",
@@ -320,6 +323,7 @@ def main():
     args = parser.parse_args()
 
     reads = zip(left_n_right_generator(args.files_directory,
+                                       files_extension="fastq",
                                        return_only="name"),
                 left_n_right_generator(args.files_directory,
                                        return_only="left"),
