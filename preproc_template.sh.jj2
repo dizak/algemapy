@@ -11,7 +11,7 @@
 ### FLASH reads assembly ###
 echo 'Assembling...'
 {% for i in reads %}
-flash {{i[1]}} {{i[2]}} -o {{i[0]}}
+  flash {{i[1]}} {{i[2]}} -o {{i[0]}}
 {% endfor %}
 echo 'DONE!'
 ### ORF filtering ###
