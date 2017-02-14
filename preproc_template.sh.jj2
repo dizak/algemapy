@@ -21,7 +21,7 @@ echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
 {% for i in reads %}
-  mafft --threads {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
+  mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
 {% endfor %}
 ### RAxML tree construction ###
 echo 'Building tree...'
