@@ -12,6 +12,49 @@ __author__ = "Dariusz Izak IBB PAS"
 __version = "testing"
 
 
+def sanitize_names(file_path,
+                   leading_char="@",
+                   unwanted_char=":",
+                   wanted_char="_"):
+    """
+    Remove unwanted characters from read names. Reads are recognized as
+    lines starting with <>> character. Uses simplests possible built-in methods.
+
+    Parameters
+    -------
+    file_path: str
+        Path to input file.
+    unwanted_char: str
+        Charater to remove.
+    wanted_char: str
+        Charater to replace unwanted_char with.
+
+    Returns
+    -------
+    list of str
+        Sanitized input file content as list of lines.
+
+    Examples
+    -------
+    >>> sanitized = sanitize_names("/path/to/your/file",
+                                   unwanted_char=":",
+                                   wanted_char="_")
+    >>> sanitized[0]
+    '>M00967_43_000000000-A3JHG_1_1101_10551_7682 1_N_0_188\n'
+    """
+    corrected_file = []
+    corrected_name = "{0}.corr.fastq".format(file_path)
+    with open(file_path) as fin:
+        for i in fin.readlines():
+            if i.startswith(leading_char):
+                i = i.replace(unwanted_char, wanted_char)
+            else:
+                pass
+            corrected_file.append(i)
+    with open(corrected_name, "w") as fout:
+        fout.writelines(corrected_file)
+
+
 def find_stop_codons(threshold,
                      records,
                      below_threshold=False):
