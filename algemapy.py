@@ -43,6 +43,7 @@ def render_template(template_loaded,
                     ntasks_per_node=6,
                     mem_per_cpu=24,
                     node_list=None,
+                    processors=24,
                     reads=None):
     """
     Render previosuly loaded jinja2.environment.Template into str with passed
@@ -81,6 +82,7 @@ def render_template(template_loaded,
                      "ntasks_per_node": 6,
                      "mem_per_cpu": 24,
                      "node_list": None,
+                     "processors": 24,
                      "reads": reads}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
@@ -277,6 +279,12 @@ def main():
                           metavar="",
                           default=None,
                           help="Request a specific list of nodes.")
+    headnode.add_argument("--processors",
+                          action="store",
+                          dest="processors",
+                          metavar="",
+                          default=24,
+                          help="number of logical processors. Default: <24>")
     args = parser.parse_args()
 
     files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
@@ -300,6 +308,7 @@ def main():
                                      ntasks_per_node=args.ntasks_per_node,
                                      mem_per_cpu=args.mem_per_cpu,
                                      node_list=args.node_list,
+                                     processors=args.processors,
                                      reads=reads)
     save_template(args.output_file_name,
                   rendered_templ)
