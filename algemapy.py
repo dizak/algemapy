@@ -322,13 +322,19 @@ def main():
                           help="Request a specific list of nodes.")
     args = parser.parse_args()
 
-    reads = zip(left_n_right_generator(args.files_directory,
+    files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
+    reads = zip(left_n_right_generator(files_directory_abs,
                                        files_extension="fastq",
                                        return_only="name"),
-                left_n_right_generator(args.files_directory,
+                left_n_right_generator(files_directory_abs,
                                        return_only="left"),
-                left_n_right_generator(args.files_directory,
+                left_n_right_generator(files_directory_abs,
                                        return_only="right"))
+    if len(reads) == 0:
+        print "No fastq files found in {0}. Quitting...".format(files_directory_abs)
+        quit()
+    else:
+        pass
     loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
                                      notify_email=args.notify_email,
