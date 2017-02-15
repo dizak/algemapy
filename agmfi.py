@@ -129,8 +129,24 @@ def main():
                         default=".",
                         help="Output directory path. Default: working\
                         directory")
+    parser.add_argument("-s",
+                        "--sanitize-only",
+                        action="store",
+                        dest="sanitize_only",
+                        default=None,
+                        help="Use if you just want to remove specified\
+                        character from the file.")
     args = parser.parse_args()
 
+    if args.sanitize_only is not None:
+        sanitize_names(input_file_name=args.files_directory,
+                       output_file_name=args.output_path,
+                       leading_char="",
+                       unwanted_char=args.sanitize_only,
+                       wanted_char="")
+        exit()
+    else:
+        pass
     conv_n_filter(files_directory=args.files_directory,
                   output_path=args.output_path)
 
