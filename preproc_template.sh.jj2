@@ -23,6 +23,14 @@ echo 'Aligning...'
 {% for i in reads %}
   mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
 {% endfor %}
+### Preprocessing temporarily with mothur ###
+{% for i in reads %}
+  echo 'unique.seqs(fasta={{i[0]}}.mafft)'
+{% endfor %}
+### Preprocessing with agmfi ###
+{% for i in reads %}
+  agmfi.py {{i[0]}}.unique.mafft -s - -o {{i[0]}}.unique.mafft
+{% endfor %}
 ### RAxML tree construction ###
 echo 'Building tree...'
 {% for i in reads %}
