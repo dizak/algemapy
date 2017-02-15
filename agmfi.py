@@ -25,6 +25,11 @@ def sanitize_names(input_file_name,
     -------
     input_file_name: str
         Path to input file.
+    output_file_name: str
+        Path to output file.
+    leading_char: str or int
+        Character to identify lines of interest. Using empty str causes\
+        removal of unwanted_char everywhere.
     unwanted_char: str
         Charater to remove.
     wanted_char: str
