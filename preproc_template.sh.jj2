@@ -27,14 +27,10 @@ echo 'Aligning...'
 {% for i in reads %}
   echo 'unique.seqs(fasta={{i[0]}}.mafft)' | mothur
 {% endfor %}
-### Preprocessing with agmfi ###
-{% for i in reads %}
-  agmfi.py {{i[0]}}.unique.mafft -s - -o {{i[0]}}.filtered.unique.mafft
-{% endfor %}
 ### RAxML tree construction ###
 echo 'Building tree...'
 {% for i in reads %}
-  raxmlHPC-PTHREADS -T {{processors}} -m GTRGAMMA -p 12345 -s {{i[0]}}.filtered.unique.mafft -# 20 -n {{job_name}}_{{i[0]}}
+  raxmlHPC-PTHREADS -T {{processors}} -m GTRGAMMA -p 12345 -s {{i[0]}}.unique.mafft -# 20 -n {{job_name}}_{{i[0]}}
   mothulity_draw.py --tree RAxML_bestTree.{{job_name}}_{{i[0]}}
   headnode_notifier.py {{notify_email}} --subject 'Tree RAxML_bestTree.{{job_name}}_{{i[0]}}' --attach RAxML_bestTree.{{job_name}}_{{i[0]}}.svg
 {% endfor %}
