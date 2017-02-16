@@ -78,11 +78,11 @@ def render_template(template_loaded,
     template_vars = {"notify_email": notify_email,
                      "job_name": job_name,
                      "partition": "long",
-                     "nodes": 1,
-                     "ntasks_per_node": 6,
-                     "mem_per_cpu": 24,
+                     "nodes": nodes,
+                     "ntasks_per_node": ntasks_per_node,
+                     "mem_per_cpu": mem_per_cpu,
                      "node_list": None,
-                     "processors": 24,
+                     "processors": processors,
                      "reads": reads}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
@@ -286,6 +286,8 @@ def main():
                           default=24,
                           help="number of logical processors. Default: <24>")
     args = parser.parse_args()
+
+    print args.processors
 
     files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
     reads = zip(left_n_right_generator(files_directory_abs,
