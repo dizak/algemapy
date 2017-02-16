@@ -26,6 +26,7 @@ echo 'Aligning...'
 ### Preprocessing temporarily with mothur ###
 {% for i in reads %}
   echo 'unique.seqs(fasta={{i[0]}}.mafft)' | mothur
+  echo 'screen.seqs(processors={{processors}}, fasta={{i[0]}}.unique.mafft, optimize=start-end, criteria=98)' | mothur
 {% endfor %}
 ### RAxML tree construction ###
 echo 'Building tree...'
