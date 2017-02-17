@@ -3,6 +3,8 @@
 
 import argparse
 from Bio import SeqIO
+from Bio.SeqRecord import SeqRecord
+from tqdm import tqdm
 
 
 __author__ = "Dariusz Izak IBB PAS"
@@ -13,13 +15,12 @@ def id_reform(input_file_name,
               output_file_name):
     output_ids = []
     output_recs = []
-    fasta = list(SeqIO.parse(input_file_name, "fasta"))
-    for i in fasta:
-        num = i.id.split(".")[0]
-        tax = i.description.split(";")[-1]
-        i.id = "{0}.{1}".format(tax, num)
     with open(output_file_name, "w") as fout:
-        SeqIO.write(fasta, fout, "fasta")
+        for i in tqdm(SeqIO.parse(input_file_name, "fasta")):
+            record = SeqRecord(id="{0}.{1}".format(i.description.split(";")[-1],
+                                                   i.id.split(".")[0]),
+                               seq=i.seq)
+            SeqIO.write(record, fout, "fasta")
 
 
 def main():
