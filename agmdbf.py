@@ -19,7 +19,8 @@ def id_reform(input_file_name,
         for i in tqdm(SeqIO.parse(input_file_name, "fasta")):
             record = SeqRecord(id="{0}.{1}".format(i.description.split(";")[-1],
                                                    i.id.split(".")[0]),
-                               seq=i.seq)
+                               seq=i.seq,
+                               description="")
             SeqIO.write(record, fout, "fasta")
 
 
