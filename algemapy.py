@@ -44,7 +44,8 @@ def render_template(template_loaded,
                     mem_per_cpu=24,
                     node_list=None,
                     processors=24,
-                    reads=None):
+                    reads=None,
+                    rax_version=None):
     """
     Render previosuly loaded jinja2.environment.Template into str with passed
     vars expanded.
@@ -83,7 +84,8 @@ def render_template(template_loaded,
                      "mem_per_cpu": mem_per_cpu,
                      "node_list": None,
                      "processors": processors,
-                     "reads": reads}
+                     "reads": reads,
+                     "rax_version": rax_version}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
 
@@ -245,6 +247,14 @@ def main():
                                 script immediately, in current directory.\
                                 eg -r sh for regular bash or -r sbatch for\
                                 slurm.")
+    parser.add_argument("--rax-version",
+                        action="store",
+                        dest="rax_version",
+                        metavar="",
+                        default=None,
+                        help="RAxML version to call, eg SSE3 or AVX. Depends\
+                        on compilation process, described in the program's\
+                        documentation and differs in efficiency.")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
@@ -311,7 +321,8 @@ def main():
                                      mem_per_cpu=args.mem_per_cpu,
                                      node_list=args.node_list,
                                      processors=args.processors,
-                                     reads=reads)
+                                     reads=reads,
+                                     rax_version=args.rax_version)
     save_template(args.output_file_name,
                   rendered_templ)
     if args.run is not None:
