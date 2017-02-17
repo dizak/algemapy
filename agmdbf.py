@@ -9,6 +9,19 @@ __author__ = "Dariusz Izak IBB PAS"
 __version = "testing"
 
 
+def id_reform(input_file_name,
+              output_file_name):
+    output_ids = []
+    output_recs = []
+    fasta = list(SeqIO.parse(input_file_name, "fasta"))
+    for i in fasta[:20]:
+        num = i.id.split(".")[0]
+        tax = i.description.split(";")[-1]
+        i.id = "{0}.{1}".format(tax, num)
+    with open(output_file_name, "w") as fout:
+        SeqIO.write(fasta, fout, "fasta")
+
+
 def main():
     parser = argparse.ArgumentParser(prog="agmdbf",
                                      usage="agmdbf.py [FILE] [OPTION]",
@@ -30,6 +43,7 @@ def main():
                         help="Output file path. Default: working\
                         directory")
     args = parser.parse_args()
+    id_reform(args.files_directory, args.output_path)
 
 
 if __name__ == '__main__':
