@@ -133,6 +133,7 @@ def main():
                         "--sanitize-only",
                         action="store",
                         dest="sanitize_only",
+                        metavar="",
                         default=None,
                         help="Use if you just want to remove specified\
                         character from the file.")
