@@ -14,7 +14,7 @@ def id_reform(input_file_name,
     output_ids = []
     output_recs = []
     fasta = list(SeqIO.parse(input_file_name, "fasta"))
-    for i in fasta[:20]:
+    for i in fasta:
         num = i.id.split(".")[0]
         tax = i.description.split(";")[-1]
         i.id = "{0}.{1}".format(tax, num)
