@@ -2,6 +2,7 @@
 
 
 import argparse
+from Bio import Entrez
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from tqdm import tqdm
@@ -9,6 +10,23 @@ from tqdm import tqdm
 
 __author__ = "Dariusz Izak IBB PAS"
 __version = "testing"
+
+
+def db_dwn(db,
+           term,
+           output_file_name,
+           email="dariusz.izak@ibb.waw.pl"):
+    Entrez.email = email
+    db_handle = Entrez.esearch(db=db, term=term)
+    db_record = Entrez.read(db_handle)
+    db_full_size = db_record["Count"]
+    db_handle = Entrez.esearch(db=db, term=term, retmax=db_full_size)
+    db_record = Entrez.read(db_handle)
+    with open(output_file_name, "w") as fout:
+        for i in tqdm(db_record["IdList"]):
+            hand = Entrez.efetch(db=db, id=i, rettype="fasta", retmode="text")
+            rec = SeqIO.read(hand, "fasta")
+            SeqIO.write(rec, fout, "fasta")
 
 
 def id_reform(input_file_name,
@@ -44,7 +62,16 @@ def main():
                         default=".",
                         help="Output file path. Default: working\
                         directory")
+    parser.add_argument("--download",
+                        action="store_true",
+                        dest="download",
+                        default=False,
+                        help="Use if you want to download database.")
     args = parser.parse_args()
+    if args.download is True:
+        db_dwn(db="nucleotide",
+               term="pheS[Gene] AND Lactobacillaceae [Orgn]",
+               output_file_name=args.output_path)
     id_reform(args.files_directory, args.output_path)
 
 
