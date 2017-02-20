@@ -2,9 +2,7 @@
 
 
 import argparse
-from Bio import Entrez
-from Bio import SeqIO
-from Bio.SeqRecord import SeqRecord
+from Bio import Entrez, SeqIO, SeqRecord
 from tqdm import tqdm
 
 
