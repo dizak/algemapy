@@ -263,6 +263,17 @@ def main():
                         help="RAxML version to call, eg SSE3 or AVX. Depends\
                         on compilation process, described in the program's\
                         documentation and differs in efficiency.")
+    headnode.add_argument("--resources",
+                          action="store",
+                          dest="resources",
+                          metavar="",
+                          default=None,
+                          help="shortcut for headnode's resources reservation.\
+                          Accepted values are: <S>mall, <M>edium, <L>arge,\
+                          <XL>arge for regular nodes with mpi. <PHI> for\
+                          single phi node, <JUMBO> for two phi nodes.\
+                          Overrides all the other headnode arguments. Use if\
+                          you are lazy.")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
@@ -305,7 +316,54 @@ def main():
                           help="number of logical processors. Default: <24>")
     args = parser.parse_args()
 
-    print args.processors
+    if args.resources is not None:
+        node_list = None
+        resources = args.resources.upper()
+        if resources == "S":
+            partition = "long"
+            nodes = 2
+            ntasks_per_node = 6
+            mem_per_cpu = 24
+            processors = 48
+        elif resources == "M":
+            partition = "long"
+            nodes = 10
+            ntasks_per_node = 6
+            mem_per_cpu = 24
+            processors = 240
+        elif resources == "L":
+            partition = "long"
+            nodes = 20
+            ntasks_per_node = 6
+            mem_per_cpu = 24
+            processors = 480
+        elif resources == "XL":
+            partition = "long"
+            nodes = 40
+            ntasks_per_node = 6
+            mem_per_cpu = 24
+            processors = 960
+        elif resources == "PHI":
+            partition = "accel"
+            nodes = 1
+            ntasks_per_node = 16
+            mem_per_cpu = 128
+            processors = 32
+        elif resources == "JUMBO":
+            partition = "accel"
+            nodes = 4
+            ntasks_per_node = 16
+            mem_per_cpu = 128
+            processors = 128
+        else:
+            pass
+    else:
+        nodes = args.nodes
+        node_list = args.node_list
+        ntasks_per_node = args.ntasks_per_node
+        mem_per_cpu = args.mem_per_cpu
+        processors = args.processors
+        partition = args.partition
 
     files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
     reads = zip(left_n_right_generator(files_directory_abs,
@@ -324,12 +382,12 @@ def main():
     rendered_templ = render_template(loaded_templ,
                                      job_name=args.job_name,
                                      notify_email=args.notify_email,
-                                     partition=args.partition,
-                                     nodes=args.nodes,
-                                     ntasks_per_node=args.ntasks_per_node,
-                                     mem_per_cpu=args.mem_per_cpu,
-                                     node_list=args.node_list,
-                                     processors=args.processors,
+                                     partition=partition,
+                                     nodes=nodes,
+                                     ntasks_per_node=ntasks_per_node,
+                                     mem_per_cpu=mem_per_cpu,
+                                     node_list=node_list,
+                                     processors=processors,
                                      reads=reads,
                                      rax_version=args.rax_version)
     save_template(args.output_file_name,
