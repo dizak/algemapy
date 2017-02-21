@@ -223,6 +223,14 @@ def main():
                         dest="files_directory",
                         metavar="",
                         help="Input directory path.")
+    parser.add_argument("-n",
+                        "--job-name",
+                        action="store",
+                        dest="job_name",
+                        metavar="",
+                        default="algemapy.job",
+                        help="job name. Used for naming scripts, queued job\
+                        and output. Default <algemapy.job>.")
     parser.add_argument("-o",
                         "--output",
                         action="store",
@@ -314,6 +322,7 @@ def main():
         pass
     loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
+                                     job_name=args.job_name,
                                      notify_email=args.notify_email,
                                      partition=args.partition,
                                      nodes=args.nodes,
