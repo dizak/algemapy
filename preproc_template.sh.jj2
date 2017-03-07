@@ -22,7 +22,7 @@ echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
 {% for i in reads %}
-mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
+srun mpirun --np {{nodes}} mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
 {% endfor %}
 {% if "raxml" in ml_software %}
 ### Preprocessing temporarily with mothur ###
