@@ -35,9 +35,7 @@ summary.seqs(fasta=current, name=current)"
 ### RAxML tree construction ###
 echo 'Building tree...'
   {% for i in reads %}
-    {% if rax_version != None %}
 {{ml_software}} -T {{processors}} -m GTRGAMMA -p 12345 -x 12345 -s {{i[0]}}.unique.filter.fasta -# 20 -n {{job_name}}_{{i[0]}}
-    {% endif %}
   {% endfor %}
 {% elif "iqtree" in ml_software %}
   {% for i in reads %}
