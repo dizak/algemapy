@@ -22,26 +22,30 @@ echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
 {% for i in reads %}
-  mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
+mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
 {% endfor %}
+{% if "raxml" in ml_software %}
 ### Preprocessing temporarily with mothur ###
-{% for i in reads %}
-  mothur "#set.current(processors={{processors}});
-  unique.seqs(fasta={{i[0]}}.mafft);
-  filter.seqs(fasta=current, trump=., vertical=T);
-  summary.seqs(fasta=current, name=current)"
-{% endfor %}
+  {% for i in reads %}
+mothur "#set.current(processors={{processors}});
+unique.seqs(fasta={{i[0]}}.mafft);
+filter.seqs(fasta=current, trump=., vertical=T);
+summary.seqs(fasta=current, name=current)"
+  {% endfor %}
 ### RAxML tree construction ###
 echo 'Building tree...'
-{% for i in reads %}
-  {% if rax_version != None %}
-    raxmlHPC-PTHREADS-{{rax_version}} -T {{processors}} -m GTRGAMMA -p 12345 -x 12345 -s {{i[0]}}.unique.filter.fasta -# 20 -n {{job_name}}_{{i[0]}}
-  {% else %}
-    raxmlHPC-PTHREADS -T {{processors}} -m GTRGAMMA -p 12345 -x 12345 -s {{i[0]}}.unique.filter.fasta -# 20 -n {{job_name}}_{{i[0]}}
-  {% endif %}
-  mothulity_draw.py --tree RAxML_bestTree.{{job_name}}_{{i[0]}}
-  headnode_notifier.py {{notify_email}} --subject 'Tree RAxML_bestTree.{{job_name}}_{{i[0]}}' --attach RAxML_bestTree.{{job_name}}_{{i[0]}}.svg
-{% endfor %}
+  {% for i in reads %}
+    {% if rax_version != None %}
+{{ml_software}} -T {{processors}} -m GTRGAMMA -p 12345 -x 12345 -s {{i[0]}}.unique.filter.fasta -# 20 -n {{job_name}}_{{i[0]}}
+    {% endif %}
+  {% endfor %}
+{% elif "iqtree" in ml_software %}
+  {% for i in reads %}
+srun mpirun -np {{nodes}} iqtree-omp-mpi -s {{i[0]}}.mafft -nt {{processors}}
+  {% endfor %}
+{% else %}
+echo 'Custom tree construction command is not ready yet! I told you it can go all wrong... I told you!'
+{% endif %}
 echo 'DONE!'
 {% if notify_email != None %}
 echo 'Sending notification...'
