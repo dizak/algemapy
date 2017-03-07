@@ -314,7 +314,7 @@ def main():
                           action="store",
                           dest="processors",
                           metavar="",
-                          default=24,
+                          default=1,
                           help="number of logical processors. Default: <24>")
     args = parser.parse_args()
 
