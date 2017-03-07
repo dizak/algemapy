@@ -261,7 +261,7 @@ def main():
                         action="store",
                         dest="ml_software",
                         metavar="",
-                        default=None,
+                        default="iqtree-omp-mpi",
                         help="Maximum Likelihood computation software to use.\
                         Use same invocation as when calling the program on its\
                         own. At the moment, only RAxML and iqtree are\
@@ -274,11 +274,11 @@ def main():
                           metavar="",
                           default=None,
                           help="shortcut for headnode's resources reservation.\
-                          Accepted values are: <S>mall, <M>edium, <L>arge,\
-                          <XL>arge for regular nodes with mpi. <PHI> for\
-                          single phi node, <JUMBO> for two phi nodes.\
-                          Overrides all the other headnode arguments. Use if\
-                          you are lazy.")
+                          Accepted values are: <S>mall - 2 nodes, <M>edium -\
+                          10 nodes, <L>arge - 20 nodes, <XL>arge - 40 nodes\
+                          for regular nodes with mpi. <PHI> for single phi\
+                          node, <JUMBO> for two phi nodes. Overrides all the\
+                          other headnode arguments. Use if you are lazy.")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
