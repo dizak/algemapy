@@ -38,6 +38,7 @@ def load_template_file(template_file):
 def render_template(template_loaded,
                     notify_email=None,
                     job_name="algemapy.job",
+                    run=None,
                     partition="long",
                     nodes=1,
                     ntasks_per_node=6,
@@ -78,6 +79,7 @@ def render_template(template_loaded,
     """
     template_vars = {"notify_email": notify_email,
                      "job_name": job_name,
+                     "run": run,
                      "partition": "long",
                      "nodes": nodes,
                      "ntasks_per_node": ntasks_per_node,
@@ -381,6 +383,7 @@ def main():
     loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
                                      job_name=args.job_name,
+                                     run=args.run,
                                      notify_email=args.notify_email,
                                      partition=partition,
                                      nodes=nodes,
