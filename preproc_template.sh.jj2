@@ -17,7 +17,7 @@ echo 'Assembling...'
 echo 'DONE!'
 ### ORF filtering ###
 echo 'ORFs filtering...'
-srun mpirun -np {{nodes}} agmfi.py .
+agmfi.py .
 echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
