@@ -274,11 +274,12 @@ def main():
                           metavar="",
                           default=None,
                           help="shortcut for headnode's resources reservation.\
-                          Accepted values are: <S>mall - 2 nodes, <M>edium -\
-                          10 nodes, <L>arge - 20 nodes, <XL>arge - 40 nodes\
-                          for regular nodes with mpi. <PHI> for single phi\
-                          node, <JUMBO> for two phi nodes. Overrides all the\
-                          other headnode arguments. Use if you are lazy.")
+                          Accepted values are: <XS>mall - 1 node, <S>mall - 2\
+                          nodes, <M>edium -10 nodes, <L>arge - 20 nodes,\
+                          <XL>arge - 40 nodes for regular nodes with mpi.\
+                          <PHI> for single phi node, <JUMBO> for two phi\
+                          nodes. Overrides all the other headnode arguments.\
+                          Use if you are lazy.")
     headnode.add_argument("--partition",
                           action="store",
                           dest="partition",
@@ -324,7 +325,13 @@ def main():
     if args.resources is not None:
         node_list = None
         resources = args.resources.upper()
-        if resources == "S":
+        if resources == "XS":
+            partition = "long"
+            nodes = 1
+            ntasks_per_node = 6
+            mem_per_cpu = 24
+            processors = 24
+        elif resources == "S":
             partition = "long"
             nodes = 2
             ntasks_per_node = 6
