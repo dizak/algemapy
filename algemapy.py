@@ -46,7 +46,7 @@ def render_template(template_loaded,
                     node_list=None,
                     processors=24,
                     reads=None,
-                    rax_version=None):
+                    ml_software="iqtree-omp"):
     """
     Render previosuly loaded jinja2.environment.Template into str with passed
     vars expanded.
@@ -87,7 +87,7 @@ def render_template(template_loaded,
                      "node_list": None,
                      "processors": processors,
                      "reads": reads,
-                     "rax_version": rax_version}
+                     "ml_software": ml_software}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
 
@@ -257,14 +257,17 @@ def main():
                                 script immediately, in current directory.\
                                 eg -r sh for regular bash or -r sbatch for\
                                 slurm.")
-    parser.add_argument("--rax-version",
+    parser.add_argument("--ML-software",
                         action="store",
-                        dest="rax_version",
+                        dest="ml_software",
                         metavar="",
                         default=None,
-                        help="RAxML version to call, eg SSE3 or AVX. Depends\
-                        on compilation process, described in the program's\
-                        documentation and differs in efficiency.")
+                        help="Maximum Likelihood computation software to use.\
+                        Use same invocation as when calling the program on its\
+                        own. At the moment, only RAxML and iqtree are\
+                        recognized and properly set. Anything and everything\
+                        can go wrong if using something else. Default\
+                        <iqtree-omp>.")
     headnode.add_argument("--resources",
                           action="store",
                           dest="resources",
@@ -392,7 +395,7 @@ def main():
                                      node_list=node_list,
                                      processors=processors,
                                      reads=reads,
-                                     rax_version=args.rax_version)
+                                     ml_software=args.ml_software)
     save_template(args.output_file_name,
                   rendered_templ)
     if args.run is not None:
