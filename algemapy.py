@@ -318,7 +318,7 @@ def main():
                           dest="processors",
                           metavar="",
                           default=1,
-                          help="number of logical processors. Default: <24>")
+                          help="number of logical processors. Default: <1>")
     args = parser.parse_args()
 
     if args.resources is not None:
