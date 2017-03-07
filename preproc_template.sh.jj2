@@ -41,7 +41,11 @@ echo 'Building tree...'
   {% endfor %}
 {% elif "iqtree" in ml_software %}
   {% for i in reads %}
-srun mpirun -np {{nodes}} iqtree-omp-mpi -s {{i[0]}}.mafft -nt {{processors}}
+    {% if nodes > 1 %}
+    srun mpirun -np {{nodes}} {{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
+    {% else %}
+    {{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
+    {% endif %}
   {% endfor %}
 {% else %}
 echo 'Custom tree construction command is not ready yet! I told you it can go all wrong... I told you!'
