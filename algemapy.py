@@ -39,11 +39,7 @@ def render_template(template_loaded,
                     notify_email=None,
                     job_name="algemapy.job",
                     run=None,
-                    partition="long",
-                    nodes=1,
-                    ntasks_per_node=6,
-                    mem_per_cpu=24,
-                    node_list=None,
+                    resources=None,
                     processors=24,
                     reads=None,
                     ml_software="iqtree-omp"):
@@ -58,17 +54,6 @@ def render_template(template_loaded,
     job_name: str, default <algemapy.job>
         Name that identifies your job in slurm. Also used for the project
         identification by algemapy.
-    partition: str, default <long>
-        Headnode's partition. Values: test, short, big, long, accel. Accel
-        necessary for phi/gpu nodes.
-    nodes: int, default <1>
-        Number of nodes.
-    ntasks_per_node: int, default <6>
-        Number of tasks to invoke on each node.
-    mem_per_cpu: int, default <24>
-        Maximum amount of real memory per node in gigabytes.
-    node_list: str, default <None>
-        Request a specific list of nodes.
     reads: list of two-element tuple/list, default <None>
         Reads file names that will be assembled by flash.
 
@@ -80,11 +65,7 @@ def render_template(template_loaded,
     template_vars = {"notify_email": notify_email,
                      "job_name": job_name,
                      "run": run,
-                     "partition": "long",
-                     "nodes": nodes,
-                     "ntasks_per_node": ntasks_per_node,
-                     "mem_per_cpu": mem_per_cpu,
-                     "node_list": None,
+                     "resources": resources,
                      "processors": processors,
                      "reads": reads,
                      "ml_software": ml_software}
@@ -257,6 +238,12 @@ def main():
                                 script immediately, in current directory.\
                                 eg -r sh for regular bash or -r sbatch for\
                                 slurm.")
+    parser.add_argument("--processors",
+                        action="store",
+                        dest="processors",
+                        metavar="",
+                        default=1,
+                        help="number of logical processors. Default: <1>")
     parser.add_argument("--ML-software",
                         action="store",
                         dest="ml_software",
@@ -278,104 +265,51 @@ def main():
                           nodes, <M>edium -10 nodes, <L>arge - 20 nodes,\
                           <XL>arge - 40 nodes for regular nodes with mpi.\
                           <PHI> for single phi node, <JUMBO> for two phi\
-                          nodes. Overrides all the other headnode arguments.\
-                          Use if you are lazy.")
-    headnode.add_argument("--partition",
-                          action="store",
-                          dest="partition",
-                          metavar="",
-                          default="long",
-                          help="Headnode's partition. Values: test, short, big,\
-                                  long, accel. Accel necessary for phi/gpu nodes\
-                                  Default <long>.")
-    headnode.add_argument("--nodes",
-                          action="store",
-                          dest="nodes",
-                          metavar="",
-                          default=1,
-                          help="Number of nodes. Default: <1>.")
-    headnode.add_argument("--ntasks-per-node",
-                          action="store",
-                          dest="ntasks_per_node",
-                          metavar="",
-                          default=6,
-                          help="Number of tasks to invoke on each node.\
-                                Default <6>.")
-    headnode.add_argument("--mem-per-cpu",
-                          action="store",
-                          dest="mem_per_cpu",
-                          metavar="",
-                          default=24,
-                          help="Maximum amount of real memory per node in\
-                                gigabytes. Default <24>.")
-    headnode.add_argument("--node-list",
-                          action="store",
-                          dest="node_list",
-                          metavar="",
-                          default=None,
-                          help="Request a specific list of nodes.")
-    headnode.add_argument("--processors",
-                          action="store",
-                          dest="processors",
-                          metavar="",
-                          default=1,
-                          help="number of logical processors. Default: <1>")
+                          nodes.Default <None>")
     args = parser.parse_args()
 
     if args.resources is not None:
-        node_list = None
-        resources = args.resources.upper()
-        if resources == "XS":
-            partition = "long"
-            nodes = 1
-            ntasks_per_node = 6
-            mem_per_cpu = 24
-            processors = 24
-        elif resources == "S":
-            partition = "long"
-            nodes = 2
-            ntasks_per_node = 6
-            mem_per_cpu = 24
-            processors = 24
-        elif resources == "M":
-            partition = "long"
-            nodes = 10
-            ntasks_per_node = 6
-            mem_per_cpu = 24
-            processors = 120
-        elif resources == "L":
-            partition = "long"
-            nodes = 20
-            ntasks_per_node = 6
-            mem_per_cpu = 24
-            processors = 240
-        elif resources == "XL":
-            partition = "long"
-            nodes = 40
-            ntasks_per_node = 6
-            mem_per_cpu = 24
-            processors = 480
-        elif resources == "PHI":
-            partition = "accel"
-            nodes = 1
-            ntasks_per_node = 16
-            mem_per_cpu = 128
+        resources = {}
+        if args.resources.upper() == "XS":
+            resources["partition"] = "long"
+            resources["nodes"] = 1
+            resources["mem"] = 23
+            processors = 12
+        elif args.resources.upper() == "S":
+            resources["partition"] = "long"
+            resources["nodes"] = 2
+            resources["mem"] = 23
+            processors = 12
+        elif args.resources.upper() == "M":
+            resources["partition"] = "long"
+            resources["nodes"] = 10
+            resources["mem"] = 23
+            processors = 12
+        elif args.resources.upper() == "L":
+            resources["partition"] = "long"
+            resources["nodes"] = 20
+            resources["mem"] = 23
+            processors = 12
+        elif args.resources.upper() == "XL":
+            resources["partition"] = "long"
+            resources["nodes"] = 40
+            resources["mem"] = 23
+            processors = 12
+        elif args.resources.upper() == "PHI":
+            resources["partition"] = "accel"
+            resources["nodes"] = 1
+            resources["mem"] = 128
             processors = 32
-        elif resources == "JUMBO":
-            partition = "accel"
-            nodes = 4
-            ntasks_per_node = 16
-            mem_per_cpu = 128
-            processors = 128
+        elif args.resources.upper() == "JUMBO":
+            resources["partition"] = "accel"
+            resources["nodes"] = 4
+            resources["mem"] = 128
+            processors = 32
         else:
             pass
     else:
-        nodes = args.nodes
-        node_list = args.node_list
-        ntasks_per_node = args.ntasks_per_node
-        mem_per_cpu = args.mem_per_cpu
+        resources = None
         processors = args.processors
-        partition = args.partition
 
     files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
     reads = zip(left_n_right_generator(files_directory_abs,
@@ -395,11 +329,7 @@ def main():
                                      job_name=args.job_name,
                                      run=args.run,
                                      notify_email=args.notify_email,
-                                     partition=partition,
-                                     nodes=nodes,
-                                     ntasks_per_node=ntasks_per_node,
-                                     mem_per_cpu=mem_per_cpu,
-                                     node_list=node_list,
+                                     resources=resources,
                                      processors=processors,
                                      reads=reads,
                                      ml_software=args.ml_software)

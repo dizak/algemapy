@@ -1,13 +1,9 @@
 #!/bin/bash
-{% if run == "sbatch" or nodes > 1 %}
+{% if resources %}
 #SBATCH --job-name="{{job_name}}"
-#SBATCH --partition={{partition}}
-#SBATCH --nodes={{nodes}}
-#SBATCH --ntasks-per-node={{ntasks_per_node}}
-#SBATCH --mem-per-cpu={{mem_per_cpu}}
-  {% if node_list != None %}
-#SBATCH --nodelist={{node_list}}
-  {% endif %}
+#SBATCH --partition={{resources.partition}}
+#SBATCH --nodes={{resources.nodes}}
+#SBATCH --mem={{resources.mem}}
 {% endif %}
 ### FLASH reads assembly ###
 echo 'Assembling...'
@@ -22,7 +18,7 @@ echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
 {% for i in reads %}
-srun mpirun --np {{nodes}} mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
+{% if resources and resources.nodes > 1 %}srun mpirun --np {{resources.nodes}} {% endif %}mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
 {% endfor %}
 {% if "raxml" in ml_software %}
 ### Preprocessing temporarily with mothur ###
@@ -39,18 +35,13 @@ echo 'Building tree...'
   {% endfor %}
 {% elif "iqtree" in ml_software %}
   {% for i in reads %}
-    {% if nodes > 1 %}
-srun mpirun -np {{nodes}} {{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
-    {% else %}
-{{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
-    {% endif %}
+{% if resources and resources.nodes > 1 %}srun mpirun --np {{resources.nodes}} {% endif %}{{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
   {% endfor %}
 {% else %}
 echo 'Custom tree construction command is not ready yet! I told you it can go all wrong... I told you!'
 {% endif %}
 echo 'DONE!'
-{% if notify_email != None %}
+{% if notify_email %}
 echo 'Sending notification...'
 headnode_notifier.py {{notify_email}} --subject '{{job_name}} has finished'
-{% else %}
 {% endif %}
