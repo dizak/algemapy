@@ -40,9 +40,9 @@ echo 'Building tree...'
 {% elif "iqtree" in ml_software %}
   {% for i in reads %}
     {% if nodes > 1 %}
-    srun mpirun -np {{nodes}} {{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
+srun mpirun -np {{nodes}} {{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
     {% else %}
-    {{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
+{{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
     {% endif %}
   {% endfor %}
 {% else %}
