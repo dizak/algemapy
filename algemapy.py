@@ -62,12 +62,14 @@ def render_template(template_loaded,
     str
         Ready to be saved with regular file handle.
     """
+    array_size = "{0}-{1}".format(range(len(reads))[0], range(len(reads))[-1])
     template_vars = {"files_directory": files_directory,
                      "notify_email": notify_email,
                      "job_name": job_name,
                      "run": run,
                      "processors": processors,
                      "reads": reads,
+                     "array_size": array_size,
                      "ml_software": ml_software}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
@@ -275,14 +277,13 @@ def main():
         files_index += 1
         os.rename("{}{}".format(files_directory_abs, b), "{}{}_{}".format(files_directory_abs, files_index, b))
         os.rename("{}{}".format(files_directory_abs, c), "{}{}_{}".format(files_directory_abs, files_index, c))
-    array_size = range(len(reads))
     loaded_templ = load_template_file(get_dir_path("array_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
                                      files_directory=files_directory_abs,
                                      job_name=args.job_name,
                                      run=args.run,
                                      notify_email=args.notify_email,
-                                     processors=processors,
+                                     processors=args.processors,
                                      reads=reads,
                                      ml_software=args.ml_software)
     save_template(args.output_file_name,
