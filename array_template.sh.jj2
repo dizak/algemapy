@@ -5,8 +5,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=12
-#SBATCH --array=
-{% endif %}
+#SBATCH --array={{array_size}}
+
 ### FLASH reads assembly ###
 echo 'Assembling...'
 {% for i in reads %}
