@@ -277,6 +277,13 @@ def main():
         files_index += 1
         os.rename("{}{}".format(files_directory_abs, b), "{}{}_{}".format(files_directory_abs, files_index, b))
         os.rename("{}{}".format(files_directory_abs, c), "{}{}_{}".format(files_directory_abs, files_index, c))
+    reads = zip(left_n_right_generator(files_directory_abs,
+                                       files_extension="fastq",
+                                       return_only="name"),
+                left_n_right_generator(files_directory_abs,
+                                       return_only="left"),
+                left_n_right_generator(files_directory_abs,
+                                       return_only="right"))
     loaded_templ = load_template_file(get_dir_path("array_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
                                      files_directory=files_directory_abs,
