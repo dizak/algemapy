@@ -275,8 +275,10 @@ def main():
     files_index = 0
     for a, b, c in reads:
         files_index += 1
-        os.rename("{}{}".format(files_directory_abs, b), "{}{}_{}".format(files_directory_abs, files_index, b))
-        os.rename("{}{}".format(files_directory_abs, c), "{}{}_{}".format(files_directory_abs, files_index, c))
+        os.rename("{}{}".format(files_directory_abs, b),
+                  "{}{}_{}".format(files_directory_abs, files_index, b))
+        os.rename("{}{}".format(files_directory_abs, c),
+                  "{}{}_{}".format(files_directory_abs, files_index, c))
     reads = zip(left_n_right_generator(files_directory_abs,
                                        files_extension="fastq",
                                        return_only="name"),
