@@ -105,9 +105,10 @@ def conv_n_filter(files_directory,
     if multiprocessing is True:
         ptmp.ProcessPool().map(sanitize_names, input_files)
         ptmp.ProcessingPool().map(f, input_files)
-    for i in input_files:
-        sanitize_names(i, i)
-        f(i)
+    else:
+        for i in input_files:
+            sanitize_names(i, i)
+            f(i)
 
 
 def main():
