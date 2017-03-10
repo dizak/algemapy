@@ -19,9 +19,7 @@ agmfi.py .
 echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
-{% for i in reads %}
-{% if resources and resources.nodes > 1 %}srun mpirun --np {{resources.nodes}} {% endif %}mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
-{% endfor %}
+mafft --thread {{processors}} $SLURM_ARRAY_TASK_ID.extendedFrags.fasta > $SLURM_ARRAY_TASK_ID.mafft
 {% if "raxml" in ml_software %}
 ### Preprocessing temporarily with mothur ###
   {% for i in reads %}
@@ -36,9 +34,7 @@ echo 'Building tree...'
 {{ml_software}} -T {{processors}} -m GTRGAMMA -p 12345 -x 12345 -s {{i[0]}}.unique.filter.fasta -# 20 -n {{job_name}}_{{i[0]}}
   {% endfor %}
 {% elif "iqtree" in ml_software %}
-  {% for i in reads %}
-{% if resources and resources.nodes > 1 %}srun mpirun --np {{resources.nodes}} {% endif %}{{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
-  {% endfor %}
+{{ml_software}} -s $SLURM_ARRAY_TASK_ID.mafft -nt {{processors}}
 {% else %}
 echo 'Custom tree construction command is not ready yet! I told you it can go all wrong... I told you!'
 {% endif %}
