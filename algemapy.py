@@ -36,11 +36,11 @@ def load_template_file(template_file):
 
 
 def render_template(template_loaded,
+                    files_directory=".",
                     notify_email=None,
                     job_name="algemapy.job",
                     run=None,
-                    resources=None,
-                    processors=24,
+                    processors=12,
                     reads=None,
                     ml_software="iqtree-omp"):
     """
@@ -62,10 +62,10 @@ def render_template(template_loaded,
     str
         Ready to be saved with regular file handle.
     """
-    template_vars = {"notify_email": notify_email,
+    template_vars = {"files_directory": files_directory,
+                     "notify_email": notify_email,
                      "job_name": job_name,
                      "run": run,
-                     "resources": resources,
                      "processors": processors,
                      "reads": reads,
                      "ml_software": ml_software}
@@ -255,61 +255,7 @@ def main():
                         recognized and properly set. Anything and everything\
                         can go wrong if using something else. Default\
                         <iqtree-omp>.")
-    headnode.add_argument("--resources",
-                          action="store",
-                          dest="resources",
-                          metavar="",
-                          default=None,
-                          help="shortcut for headnode's resources reservation.\
-                          Accepted values are: <XS>mall - 1 node, <S>mall - 2\
-                          nodes, <M>edium -10 nodes, <L>arge - 20 nodes,\
-                          <XL>arge - 40 nodes for regular nodes with mpi.\
-                          <PHI> for single phi node, <JUMBO> for two phi\
-                          nodes.Default <None>")
     args = parser.parse_args()
-
-    if args.resources is not None:
-        resources = {}
-        if args.resources.upper() == "XS":
-            resources["partition"] = "long"
-            resources["nodes"] = 1
-            resources["mem"] = 23
-            processors = 12
-        elif args.resources.upper() == "S":
-            resources["partition"] = "long"
-            resources["nodes"] = 2
-            resources["mem"] = 23
-            processors = 12
-        elif args.resources.upper() == "M":
-            resources["partition"] = "long"
-            resources["nodes"] = 10
-            resources["mem"] = 23
-            processors = 12
-        elif args.resources.upper() == "L":
-            resources["partition"] = "long"
-            resources["nodes"] = 20
-            resources["mem"] = 23
-            processors = 12
-        elif args.resources.upper() == "XL":
-            resources["partition"] = "long"
-            resources["nodes"] = 40
-            resources["mem"] = 23
-            processors = 12
-        elif args.resources.upper() == "PHI":
-            resources["partition"] = "accel"
-            resources["nodes"] = 1
-            resources["mem"] = 128
-            processors = 32
-        elif args.resources.upper() == "JUMBO":
-            resources["partition"] = "accel"
-            resources["nodes"] = 4
-            resources["mem"] = 128
-            processors = 32
-        else:
-            pass
-    else:
-        resources = None
-        processors = args.processors
 
     files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
     reads = zip(left_n_right_generator(files_directory_abs,
@@ -324,12 +270,18 @@ def main():
         quit()
     else:
         pass
-    loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
+    files_index = 0
+    for a, b, c in reads:
+        files_index += 1
+        os.rename("{}{}".format(files_directory_abs, b), "{}{}_{}".format(files_directory_abs, files_index, b))
+        os.rename("{}{}".format(files_directory_abs, c), "{}{}_{}".format(files_directory_abs, files_index, c))
+    array_size = range(len(reads))
+    loaded_templ = load_template_file(get_dir_path("array_template.sh.jj2"))
     rendered_templ = render_template(loaded_templ,
+                                     files_directory=files_directory_abs,
                                      job_name=args.job_name,
                                      run=args.run,
                                      notify_email=args.notify_email,
-                                     resources=resources,
                                      processors=processors,
                                      reads=reads,
                                      ml_software=args.ml_software)
