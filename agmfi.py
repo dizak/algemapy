@@ -87,8 +87,7 @@ def find_stop_codons(threshold,
         return above_thr
 
 
-def conv_n_filter(files_directory,
-                  glob_path="*extendedFrags.fastq",
+def conv_n_filter(input_file,
                   output_path=".",
                   max_stop_codons=3,
                   multiprocessing=False):
@@ -101,14 +100,12 @@ def conv_n_filter(files_directory,
         with open("{0}/{1}".format(output_path, file_name_fasta), "w") as fout:
             SeqIO.write(filtered, fout, format="fasta")
         print "DONE!"
-    input_files = glob.glob("{0}/{1}".format(files_directory, glob_path))
     if multiprocessing is True:
-        ptmp.ProcessPool().map(sanitize_names, input_files)
-        ptmp.ProcessingPool().map(f, input_files)
+        ptmp.ProcessPool().map(sanitize_names, input_file)
+        ptmp.ProcessingPool().map(f, input_file)
     else:
-        for i in input_files:
-            sanitize_names(i, i)
-            f(i)
+        sanitize_names(input_file, input_file)
+        f(input_file)
 
 
 def main():
@@ -149,7 +146,7 @@ def main():
         exit()
     else:
         pass
-    conv_n_filter(files_directory=args.files_directory,
+    conv_n_filter(input_file=args.files_directory,
                   output_path=args.output_path)
 
 
