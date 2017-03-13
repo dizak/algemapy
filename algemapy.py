@@ -274,7 +274,7 @@ def main():
         quit()
     else:
         pass
-    for name, left ,right in reads:
+    for name, left, right in reads:
         loaded_templ = load_template_file(get_dir_path("slave_template.sh.jj2"))
         rendered_templ = render_template(loaded_templ,
                                          files_directory=files_directory_abs,
