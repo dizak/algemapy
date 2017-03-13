@@ -274,19 +274,21 @@ def main():
         quit()
     else:
         pass
-    for name, left, right in reads:
-        loaded_templ = load_template_file(get_dir_path("slave_template.sh.jj2"))
-        rendered_templ = render_template(loaded_templ,
-                                         files_directory=files_directory_abs,
-                                         job_name=args.job_name,
-                                         name=name,
-                                         left=left,
-                                         right=right,
-                                         notify_email=args.notify_email,
-                                         processors=args.processors,
-                                         ml_software=args.ml_software)
-        save_template("{0}.sh".format(name),
-                      rendered_templ)
+    if args.run == "sbatch":
+        for name, left, right in reads:
+            loaded_templ = load_template_file(get_dir_path("slave_template.sh.jj2"))
+            rendered_templ = render_template(loaded_templ,
+                                             files_directory=files_directory_abs,
+                                             job_name=args.job_name,
+                                             name=name,
+                                             left=left,
+                                             right=right,
+                                             notify_email=args.notify_email,
+                                             processors=args.processors,
+                                             ml_software=args.ml_software)
+            save_template("{0}.sh".format(name),
+                          rendered_templ)
+            os.system("sbatch {0}".format("{0}.sh".format(name)))
     if args.run is not None:
         os.system("{0} {1}".format(args.run, args.output_file_name))
     else:
