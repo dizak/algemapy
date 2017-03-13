@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#SBATCH --job-name="{{name}}"
+#SBATCH --partition=long
+#SBATCH --nodes=1
+#SBATCH --ntasks-per-node=1
+#SBATCH --cpus-per-task=12
+
+### FLASH reads assembly ###
+echo 'Assembling...'
+flash {{files_directory}}{{left}} {{files_directory}}{{right}} -o {{name}}
+echo 'DONE!'
+### ORF filtering ###
+echo 'ORFs filtering...'
+agmfi.py {{name}}.extendedFrags.fastq
+echo 'DONE!'
+### MAFFT alignment ###
+echo 'Aligning...'
+mafft --thread {{processors}} {{name}}.extendedFrags.fasta > {{name}}.mafft
+### iqtree tree construction ###
+echo 'Building tree...'
+{{ml_software}} -s {{name}}.mafft -nt {{processors}}
+echo 'DONE!'
+{% if notify_email %}
+echo 'Sending notification...'
+headnode_notifier.py {{notify_email}} --subject '{{job_name}} has finished'
+{% endif %}
