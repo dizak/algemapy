@@ -254,7 +254,7 @@ def main():
                         action="store",
                         dest="ml_software",
                         metavar="",
-                        default="iqtree-omp-mpi",
+                        default="iqtree-omp",
                         help="Maximum Likelihood computation software to use.\
                         Use same invocation as when calling the program on its\
                         own. At the moment, only RAxML and iqtree are\
