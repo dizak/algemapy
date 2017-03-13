@@ -44,7 +44,7 @@ def render_template(template_loaded,
                     name=None,
                     left=None,
                     right=None,
-                    reads=reads
+                    reads=None,
                     ml_software="iqtree-omp"):
     """
     Render previosuly loaded jinja2.environment.Template into str with passed
@@ -292,6 +292,16 @@ def main():
                           rendered_templ)
             os.system("sbatch {0}".format("{0}.sh".format(name)))
     elif args.run == "sh":
+        loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
+        rendered_templ = render_template(loaded_templ,
+                                         files_directory=files_directory_abs,
+                                         job_name=args.job_name,
+                                         reads=reads,
+                                         notify_email=args.notify_email,
+                                         processors=args.processors,
+                                         ml_software=args.ml_software)
+        save_template("{0}.sh".format(name),
+                      rendered_templ)
         os.system("sh {0}".format(args.output_file_name))
     else:
         print "Unknow command for submitting the job. Quitting..."
