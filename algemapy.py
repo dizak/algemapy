@@ -41,7 +41,9 @@ def render_template(template_loaded,
                     job_name="algemapy.job",
                     run=None,
                     processors=12,
-                    reads=None,
+                    name=None,
+                    left=None,
+                    right=None,
                     ml_software="iqtree-omp"):
     """
     Render previosuly loaded jinja2.environment.Template into str with passed
@@ -62,14 +64,14 @@ def render_template(template_loaded,
     str
         Ready to be saved with regular file handle.
     """
-    array_size = "{0}-{1}".format(range(len(reads))[0], range(len(reads))[-1])
     template_vars = {"files_directory": files_directory,
                      "notify_email": notify_email,
                      "job_name": job_name,
                      "run": run,
                      "processors": processors,
-                     "reads": reads,
-                     "array_size": array_size,
+                     "name": name,
+                     "left": left,
+                     "right": right,
                      "ml_software": ml_software}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
@@ -272,31 +274,19 @@ def main():
         quit()
     else:
         pass
-    files_index = 0
-    for a, b, c in reads:
-        files_index += 1
-        os.rename("{}{}".format(files_directory_abs, b),
-                  "{}{}_{}".format(files_directory_abs, files_index, b))
-        os.rename("{}{}".format(files_directory_abs, c),
-                  "{}{}_{}".format(files_directory_abs, files_index, c))
-    reads = zip(left_n_right_generator(files_directory_abs,
-                                       files_extension="fastq",
-                                       return_only="name"),
-                left_n_right_generator(files_directory_abs,
-                                       return_only="left"),
-                left_n_right_generator(files_directory_abs,
-                                       return_only="right"))
-    loaded_templ = load_template_file(get_dir_path("array_template.sh.jj2"))
-    rendered_templ = render_template(loaded_templ,
-                                     files_directory=files_directory_abs,
-                                     job_name=args.job_name,
-                                     run=args.run,
-                                     notify_email=args.notify_email,
-                                     processors=args.processors,
-                                     reads=reads,
-                                     ml_software=args.ml_software)
-    save_template(args.output_file_name,
-                  rendered_templ)
+    for name, left ,right in reads:
+        loaded_templ = load_template_file(get_dir_path("slave_template.sh.jj2"))
+        rendered_templ = render_template(loaded_templ,
+                                         files_directory=files_directory_abs,
+                                         job_name=args.job_name,
+                                         name=name,
+                                         left=left,
+                                         right=right,
+                                         notify_email=args.notify_email,
+                                         processors=args.processors,
+                                         ml_software=args.ml_software)
+        save_template("{0}.sh".format(name),
+                      rendered_templ)
     if args.run is not None:
         os.system("{0} {1}".format(args.run, args.output_file_name))
     else:
