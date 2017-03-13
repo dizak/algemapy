@@ -44,6 +44,7 @@ def render_template(template_loaded,
                     name=None,
                     left=None,
                     right=None,
+                    reads=reads
                     ml_software="iqtree-omp"):
     """
     Render previosuly loaded jinja2.environment.Template into str with passed
@@ -72,6 +73,7 @@ def render_template(template_loaded,
                      "name": name,
                      "left": left,
                      "right": right,
+                     "reads": reads,
                      "ml_software": ml_software}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
@@ -289,10 +291,10 @@ def main():
             save_template("{0}.sh".format(name),
                           rendered_templ)
             os.system("sbatch {0}".format("{0}.sh".format(name)))
-    if args.run is not None:
-        os.system("{0} {1}".format(args.run, args.output_file_name))
+    elif args.run == "sh":
+        os.system("sh {0}".format(args.output_file_name))
     else:
-        pass
+        print "Unknow command for submitting the job. Quitting..."
 
 
 if __name__ == '__main__':
