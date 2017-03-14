@@ -261,6 +261,11 @@ def main():
                         recognized and properly set. Anything and everything\
                         can go wrong if using something else. Default\
                         <iqtree-omp>.")
+    headnode.add_argument("--node-type",
+                          action="store",
+                          dest="node_type",
+                          metavar="",
+                          default=None)
     args = parser.parse_args()
 
     files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
