@@ -309,7 +309,7 @@ def main():
                                          notify_email=args.notify_email,
                                          processors=args.processors,
                                          ml_software=args.ml_software)
-        save_template("{0}.sh".format(name),
+        save_template("{0}.sh".format(args.job_name),
                       rendered_templ)
         if args.dry_run is False:
             os.system("sh {0}".format(args.output_file_name))
