@@ -213,7 +213,7 @@ def main():
                         metavar="",
                         help="Input directory path.")
     parser.add_argument("--dry-run",
-                        action="store-true",
+                        action="store_true",
                         dest="dry_run",
                         default=False,
                         help="Prevents output script execution.")
@@ -298,7 +298,7 @@ def main():
                                              ml_software=args.ml_software)
             save_template("{0}.sh".format(name),
                           rendered_templ)
-            if dry_run is True:
+            if args.dry_run is False:
                 os.system("sbatch {0}".format("{0}.sh".format(name)))
     elif args.run == "sh":
         loaded_templ = load_template_file(get_dir_path("sequential.sh.jj2"))
@@ -311,7 +311,7 @@ def main():
                                          ml_software=args.ml_software)
         save_template("{0}.sh".format(name),
                       rendered_templ)
-        if dry_run is True:
+        if args.dry_run is False:
             os.system("sh {0}".format(args.output_file_name))
     else:
         print "Unknow command for submitting the job. Quitting..."
