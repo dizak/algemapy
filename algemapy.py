@@ -283,7 +283,7 @@ def main():
         pass
     if args.run == "sbatch":
         for name, left, right in reads:
-            loaded_templ = load_template_file(get_dir_path("slave_template.sh.jj2"))
+            loaded_templ = load_template_file(get_dir_path("subscript.sh.jj2"))
             rendered_templ = render_template(loaded_templ,
                                              files_directory=files_directory_abs,
                                              job_name=args.job_name,
@@ -297,7 +297,7 @@ def main():
                           rendered_templ)
             os.system("sbatch {0}".format("{0}.sh".format(name)))
     elif args.run == "sh":
-        loaded_templ = load_template_file(get_dir_path("preproc_template.sh.jj2"))
+        loaded_templ = load_template_file(get_dir_path("sequential.sh.jj2"))
         rendered_templ = render_template(loaded_templ,
                                          files_directory=files_directory_abs,
                                          job_name=args.job_name,
