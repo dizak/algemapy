@@ -284,8 +284,6 @@ def main():
     if len(reads) == 0:
         print "No fastq files found in {0}. Quitting...".format(files_directory_abs)
         quit()
-    else:
-        pass
     if args.run == "sbatch":
         for name, left, right in reads:
             loaded_templ = load_template_file(get_dir_path("subscript.sh.jj2"))
@@ -300,7 +298,8 @@ def main():
                                              ml_software=args.ml_software)
             save_template("{0}.sh".format(name),
                           rendered_templ)
-            os.system("sbatch {0}".format("{0}.sh".format(name)))
+            if dry_run is True:
+                os.system("sbatch {0}".format("{0}.sh".format(name)))
     elif args.run == "sh":
         loaded_templ = load_template_file(get_dir_path("sequential.sh.jj2"))
         rendered_templ = render_template(loaded_templ,
@@ -312,7 +311,8 @@ def main():
                                          ml_software=args.ml_software)
         save_template("{0}.sh".format(name),
                       rendered_templ)
-        os.system("sh {0}".format(args.output_file_name))
+        if dry_run is True:
+            os.system("sh {0}".format(args.output_file_name))
     else:
         print "Unknow command for submitting the job. Quitting..."
 
