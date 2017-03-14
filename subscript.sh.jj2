@@ -1,10 +1,15 @@
 #!/bin/bash
-
+{% if node_type %}
 #SBATCH --job-name="{{name}}"
+  {% if node_type == "N" %}
 #SBATCH --partition=long
+  {% else %}
+#SBATCH --partition=accel
+  {% endif %}
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
-#SBATCH --cpus-per-task=12
+#SBATCH --cpus-per-task={{processors}}
+{% endif %}
 
 ### FLASH reads assembly ###
 echo 'Assembling...'

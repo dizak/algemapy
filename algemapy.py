@@ -40,6 +40,7 @@ def render_template(template_loaded,
                     notify_email=None,
                     job_name="algemapy.job",
                     run=None,
+                    node_type=None,
                     processors=12,
                     name=None,
                     left=None,
@@ -69,6 +70,7 @@ def render_template(template_loaded,
                      "notify_email": notify_email,
                      "job_name": job_name,
                      "run": run,
+                     "node_type": node_type,
                      "processors": processors,
                      "name": name,
                      "left": left,
@@ -270,7 +272,9 @@ def main():
                           action="store",
                           dest="node_type",
                           metavar="",
-                          default=None)
+                          default=None,
+                          help="Node type to use on headnode. N and PHI are\
+                          available. Default <None>")
     args = parser.parse_args()
 
     files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
@@ -285,6 +289,10 @@ def main():
         print "No fastq files found in {0}. Quitting...".format(files_directory_abs)
         quit()
     if args.run == "sbatch":
+        if args.node_type is not None:
+            node_type = args.node_type.upper()
+        else:
+            node_type = "N"
         for name, left, right in reads:
             loaded_templ = load_template_file(get_dir_path("subscript.sh.jj2"))
             rendered_templ = render_template(loaded_templ,
@@ -294,6 +302,7 @@ def main():
                                              left=left,
                                              right=right,
                                              notify_email=args.notify_email,
+                                             node_type=node_type,
                                              processors=args.processors,
                                              ml_software=args.ml_software)
             save_template("{0}.sh".format(name),
@@ -301,12 +310,15 @@ def main():
             if args.dry_run is False:
                 os.system("sbatch {0}".format("{0}.sh".format(name)))
     elif args.run == "sh":
+        if args.node_type is not None:
+            node_type = args.node_type.upper()
         loaded_templ = load_template_file(get_dir_path("sequential.sh.jj2"))
         rendered_templ = render_template(loaded_templ,
                                          files_directory=files_directory_abs,
                                          job_name=args.job_name,
                                          reads=reads,
                                          notify_email=args.notify_email,
+                                         node_type=node_type,
                                          processors=args.processors,
                                          ml_software=args.ml_software)
         save_template("{0}.sh".format(args.job_name),
