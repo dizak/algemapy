@@ -212,6 +212,11 @@ def main():
                         dest="files_directory",
                         metavar="",
                         help="Input directory path.")
+    parser.add_argument("--dry-run",
+                        action="store-true",
+                        dest="dry_run",
+                        default=False,
+                        help="Prevents output script execution.")
     parser.add_argument("-n",
                         "--job-name",
                         action="store",
