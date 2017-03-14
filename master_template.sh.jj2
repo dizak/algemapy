@@ -1,0 +1,5 @@
+#!/bin/bash
+
+#SBATCH --job-name="{{job_name}}"
+#SBATCH --partition=short
+#SBATCH --nodes=1
