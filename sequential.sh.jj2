@@ -18,7 +18,9 @@ echo 'Assembling...'
 echo 'DONE!'
 ### ORF filtering ###
 echo 'ORFs filtering...'
-agmfi.py .
+{% for i in reads %}
+agmfi.py {{i[0]}}.extendedFrags.fastq
+{% endfor %}
 echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
