@@ -14,41 +14,26 @@
 
 ### FLASH reads assembly ###
 echo 'Assembling...'
-{% for i in reads %}
-  flash {{i[1]}} {{i[2]}} -o {{i[0]}}
+{% for name, left, right in reads %}
+  flash {{left}} {{right}} -o {{name}}
 {% endfor %}
 echo 'DONE!'
 ### ORF filtering ###
 echo 'ORFs filtering...'
-{% for i in reads %}
-agmfi.py {{i[0]}}.extendedFrags.fastq
+{% for name, left, right in reads %}
+agmfi.py {{name}}.extendedFrags.fastq
 {% endfor %}
 echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
-{% for i in reads %}
-{% if resources and resources.nodes > 1 %}srun mpirun --np {{resources.nodes}} {% endif %}mafft --thread {{processors}} {{i[0]}}.extendedFrags.fasta > {{i[0]}}.mafft
+{% for name, left, right in reads %}
+mafft --thread {{processors}} {{name}}.extendedFrags.fasta > {{name}}.mafft
 {% endfor %}
-{% if "raxml" in ml_software %}
-### Preprocessing temporarily with mothur ###
-  {% for i in reads %}
-mothur "#set.current(processors={{processors}});
-unique.seqs(fasta={{i[0]}}.mafft);
-filter.seqs(fasta=current, trump=., vertical=T);
-summary.seqs(fasta=current, name=current)"
-  {% endfor %}
-### RAxML tree construction ###
+### Tree growing ###
 echo 'Building tree...'
-  {% for i in reads %}
-{{ml_software}} -T {{processors}} -m GTRGAMMA -p 12345 -x 12345 -s {{i[0]}}.unique.filter.fasta -# 20 -n {{job_name}}_{{i[0]}}
-  {% endfor %}
-{% elif "iqtree" in ml_software %}
-  {% for i in reads %}
-{% if resources and resources.nodes > 1 %}srun mpirun --np {{resources.nodes}} {% endif %}{{ml_software}} -s {{i[0]}}.mafft -nt {{processors}}
-  {% endfor %}
-{% else %}
-echo 'Custom tree construction command is not ready yet! I told you it can go all wrong... I told you!'
-{% endif %}
+{% for name, left, right in reads %}
+{{ml_software}} -s {{name}}.mafft -nt {{processors}}
+{% endfor %}
 echo 'DONE!'
 {% if notify_email %}
 echo 'Sending notification...'
