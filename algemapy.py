@@ -312,6 +312,8 @@ def main():
     elif args.run == "sh":
         if args.node_type is not None:
             node_type = args.node_type.upper()
+        else:
+            node_type = "N"
         loaded_templ = load_template_file(get_dir_path("sequential.sh.jj2"))
         rendered_templ = render_template(loaded_templ,
                                          files_directory=files_directory_abs,
