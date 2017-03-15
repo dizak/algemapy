@@ -23,7 +23,7 @@ echo 'DONE!'
 ### MAFFT alignment ###
 echo 'Aligning...'
 mafft --thread {{processors}} {{name}}.extendedFrags.fasta > {{name}}.mafft
-### iqtree tree construction ###
+### Tree growing ###
 echo 'Building tree...'
 {{ml_software}} -s {{name}}.mafft -nt {{processors}}
 echo 'DONE!'
