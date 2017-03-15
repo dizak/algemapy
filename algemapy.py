@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 
+import time
 import jinja2 as jj2
 import argparse
 import os
@@ -276,6 +277,19 @@ def main():
                           help="Node type to use on headnode. N and PHI are\
                           available. Default <None>")
     args = parser.parse_args()
+
+    with open("{0}{1}{2}{3}{4}{5}{6}".format(args.files_directory,
+                                             time.localtime().tm_mon,
+                                             time.localtime().tm_mday,
+                                             time.localtime().tm_year,
+                                             time.localtime().tm_hour,
+                                             time.localtime().tm_sec,
+                                             args.job_name), "a") as fin:
+        fin.write("algemapy was called with these arguments:\n")
+        for k, v in vars(args).iteritems():
+            if v is not None:
+                fin.write("--{}: {}\n".format(k, v))
+    quit()
 
     files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
     reads = zip(left_n_right_generator(files_directory_abs,
