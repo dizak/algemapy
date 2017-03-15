@@ -278,14 +278,16 @@ def main():
                           available. Default <None>")
     args = parser.parse_args()
 
-    with open("{0}{1}{2}{3}{4}{5}{6}".format(args.files_directory,
-                                             time.localtime().tm_mon,
-                                             time.localtime().tm_mday,
-                                             time.localtime().tm_year,
-                                             time.localtime().tm_hour,
-                                             time.localtime().tm_sec,
-                                             args.job_name), "a") as fin:
-        fin.write("algemapy was called with these arguments:\n")
+    with open("{}{}.{}{}{}{}{}{}".format(args.files_directory,
+                                         args.job_name,
+                                         time.localtime().tm_year,
+                                         time.localtime().tm_mon,
+                                         time.localtime().tm_mday,
+                                         time.localtime().tm_hour,
+                                         time.localtime().tm_min,
+                                         time.localtime().tm_sec),
+              "a") as fin:
+        fin.write("{} was called with these arguments:\n\n".format(sys.argv[0]))
         for k, v in vars(args).iteritems():
             if v is not None:
                 fin.write("--{}: {}\n".format(k, v))
