@@ -9,8 +9,8 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task={{processors}}
-{% endif %}
 #SBATCH --exclude=gpu1,gpu2,gpu3,gpu4,gpu5,gpu6,gpu7,gpu8
+{% endif %}
 
 ### FLASH reads assembly ###
 echo 'Assembling...'
