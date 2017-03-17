@@ -18,18 +18,18 @@ flash {{files_directory}}{{left}} {{files_directory}}{{right}} -o {{name}}
 echo 'DONE!'
 ### ORF filtering ###
 echo 'ORFs filtering...'
-agmfi.py {{name}}.extendedFrags.fastq
+agmfi.py {{files_directory}}{{name}}.extendedFrags.fastq
 echo 'DONE!'
 {% if concat_reference %}
 ### Concatenating with the reference ###
-cat {{name}}.extendedFrags.fasta {{concat_reference}} > {{name}}.extendedFrags.concat.fasta
+cat {{files_directory}}{{name}}.extendedFrags.fasta {{concat_reference}} > {{files_directory}}{{name}}.extendedFrags.concat.fasta
 {% endif %}
 ### MAFFT alignment ###
 echo 'Aligning...'
-mafft --thread {{processors}} {{name}}.extendedFrags.{% if concat_reference %}concat.{% endif %}fasta > {{name}}.mafft
+mafft --thread {{processors}} {{files_directory}}{{name}}.extendedFrags.{% if concat_reference %}concat.{% endif %}fasta > {{files_directory}}{{name}}.mafft
 ### Tree growing ###
 echo 'Building tree...'
-{{ml_software}} -s {{name}}.mafft -nt {{processors}}
+{{ml_software}} -s {{files_directory}}{{name}}.mafft -nt {{processors}}
 echo 'DONE!'
 {% if notify_email %}
 echo 'Sending notification...'
