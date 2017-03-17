@@ -20,9 +20,13 @@ echo 'DONE!'
 echo 'ORFs filtering...'
 agmfi.py {{name}}.extendedFrags.fastq
 echo 'DONE!'
+{% if concat_reference %}
+### Concatenating with the reference ###
+cat {{name}}.extendedFrags.fasta {{concat_reference}} > {{name}}.extendedFrags.concat.fasta
+{% endif %}
 ### MAFFT alignment ###
 echo 'Aligning...'
-mafft --thread {{processors}} {{name}}.extendedFrags.fasta > {{name}}.mafft
+mafft --thread {{processors}} {{name}}.extendedFrags.{% if concat_reference %}concat.{% endif %}fasta > {{name}}.mafft
 ### Tree growing ###
 echo 'Building tree...'
 {{ml_software}} -s {{name}}.mafft -nt {{processors}}

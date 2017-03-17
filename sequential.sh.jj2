@@ -24,10 +24,16 @@ echo 'ORFs filtering...'
 agmfi.py {{name}}.extendedFrags.fastq
 {% endfor %}
 echo 'DONE!'
+{% if concat_reference %}
+### Concatenating with the reference ###
+  {% for name, left, right in reads %}
+cat {{name}}.extendedFrags.fasta {{concat_reference}} > {{name}}.extendedFrags.concat.fasta
+  {% endfor %}
+{% endif %}
 ### MAFFT alignment ###
 echo 'Aligning...'
 {% for name, left, right in reads %}
-mafft --thread {{processors}} {{name}}.extendedFrags.fasta > {{name}}.mafft
+mafft --thread {{processors}} {{name}}.extendedFrags.{% if concat_reference %}concat.{% endif %}fasta > {{name}}.mafft
 {% endfor %}
 ### Tree growing ###
 echo 'Building tree...'
