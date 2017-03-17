@@ -47,7 +47,8 @@ def render_template(template_loaded,
                     left=None,
                     right=None,
                     reads=None,
-                    ml_software="iqtree-omp"):
+                    ml_software="iqtree-omp",
+                    concat_reference=None):
     """
     Render previosuly loaded jinja2.environment.Template into str with passed
     vars expanded.
@@ -77,7 +78,8 @@ def render_template(template_loaded,
                      "left": left,
                      "right": right,
                      "reads": reads,
-                     "ml_software": ml_software}
+                     "ml_software": ml_software,
+                     "concat_reference": concat_reference}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
 
@@ -226,7 +228,7 @@ def main():
                         dest="job_name",
                         metavar="",
                         default="algemapy.job",
-                        help="job name. Used for naming scripts, queued job\
+                        help="Job name. Used for naming scripts, queued job\
                         and output. Default <algemapy.job>.")
     parser.add_argument("-o",
                         "--output",
@@ -257,7 +259,7 @@ def main():
                         dest="processors",
                         metavar="",
                         default=1,
-                        help="number of logical processors. Default: <1>")
+                        help="Number of logical processors. Default: <1>")
     parser.add_argument("--ML-software",
                         action="store",
                         dest="ml_software",
@@ -269,6 +271,13 @@ def main():
                         recognized and properly set. Anything and everything\
                         can go wrong if using something else. Default\
                         <iqtree-omp>.")
+    parser.add_argument("--concat-reference",
+                        action="store",
+                        dest="concat_reference",
+                        metavar="",
+                        default=None,
+                        help="/path/to/list of reference genes to concatenate with\
+                        reads from the sample. Format: fasta.")
     headnode.add_argument("--node-type",
                           action="store",
                           dest="node_type",
@@ -318,7 +327,8 @@ def main():
                                              notify_email=args.notify_email,
                                              node_type=node_type,
                                              processors=args.processors,
-                                             ml_software=args.ml_software)
+                                             ml_software=args.ml_software,
+                                             concat_reference=args.concat_reference)
             save_template("{0}.sh".format(name),
                           rendered_templ)
             if args.dry_run is False:
@@ -336,7 +346,8 @@ def main():
                                          notify_email=args.notify_email,
                                          node_type=node_type,
                                          processors=args.processors,
-                                         ml_software=args.ml_software)
+                                         ml_software=args.ml_software,
+                                         concat_reference=args.concat_reference)
         save_template("{0}.sh".format(args.job_name),
                       rendered_templ)
         if args.dry_run is False:
