@@ -276,8 +276,8 @@ def main():
                         dest="concat_reference",
                         metavar="",
                         default=None,
-                        help="/path/to/list of reference genes to concatenate with\
-                        reads from the sample. Format: fasta.")
+                        help="/path/to/list of reference genes to concatenate\
+                        with reads from the sample. Format: fasta.")
     headnode.add_argument("--node-type",
                           action="store",
                           dest="node_type",
