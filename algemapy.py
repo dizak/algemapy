@@ -48,7 +48,8 @@ def render_template(template_loaded,
                     right=None,
                     reads=None,
                     ml_software="iqtree-omp",
-                    concat_reference=None):
+                    concat_reference=None,
+                    map_reference=None):
     """
     Render previosuly loaded jinja2.environment.Template into str with passed
     vars expanded.
@@ -79,7 +80,8 @@ def render_template(template_loaded,
                      "right": right,
                      "reads": reads,
                      "ml_software": ml_software,
-                     "concat_reference": concat_reference}
+                     "concat_reference": concat_reference,
+                     "map_reference": map_reference}
     template_rendered = template_loaded.render(template_vars)
     return template_rendered
 
@@ -278,6 +280,13 @@ def main():
                         default=None,
                         help="/path/to/list of reference genes to concatenate\
                         with reads from the sample. Format: fasta.")
+    parser.add_argument("--map-reference",
+                        action="store",
+                        dest="map_reference",
+                        metavar="",
+                        default=None,
+                        help="/path/to/reference-tree to map the sample tree\
+                        on.")
     headnode.add_argument("--node-type",
                           action="store",
                           dest="node_type",
@@ -328,7 +337,8 @@ def main():
                                              node_type=node_type,
                                              processors=args.processors,
                                              ml_software=args.ml_software,
-                                             concat_reference=args.concat_reference)
+                                             concat_reference=args.concat_reference,
+                                             map_reference=args.map_reference)
             save_template("{0}.sh".format(name),
                           rendered_templ)
             if args.dry_run is False:
@@ -347,7 +357,8 @@ def main():
                                          node_type=node_type,
                                          processors=args.processors,
                                          ml_software=args.ml_software,
-                                         concat_reference=args.concat_reference)
+                                         concat_reference=args.concat_reference,
+                                         map_reference=args.map_reference)
         save_template("{0}.sh".format(args.job_name),
                       rendered_templ)
         if args.dry_run is False:
