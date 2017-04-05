@@ -28,6 +28,24 @@ def db_dwn(db,
             SeqIO.write(rec, fout, "fasta")
 
 
+def gene_seq_dwn(output_file_name,
+                 sum_df,
+                 rettype="fasta"):
+    with open(output_file_name, "w") as fout:
+        for i in sum_df.itertuples():
+            id = getattr(i, "ACC_NO")
+            start = getattr(i, "START")
+            end = getattr(i, "END")
+            hand = Entrez.efetch(db="nucleotide",
+                                 id=id,
+                                 seq_start=start,
+                                 seq_stop=end,
+                                 rettype=rettype,
+                                 retmode="text")
+            rec = SeqIO.read(hand, rettype)
+            SeqIO.write(rec, fout, rettype)
+
+
 def id_reform(input_file_name,
               output_file_name):
     output_ids = []
@@ -39,6 +57,27 @@ def id_reform(input_file_name,
                                seq=i.seq,
                                description="")
             SeqIO.write(record, fout, "fasta")
+
+
+def tab_sum_reform(input_file_name,
+                   sep="\t",
+                   cols2rename={"genomic_nucleotide_accession.version":
+                                "ACC_NO",
+                                "start_position_on_the_genomic_accession":
+                                "START",
+                                "end_position_on_the_genomic_accession":
+                                "END"},
+                   essenatial_cols=["ACC_NO", "START", "END"]):
+    tab_sum_df = pd.read_csv(input_file_name, sep=sep)
+    tab_sum_ren.rename(columns=columns2rename)
+    tab_sum_nona = tab_sum_ren[essenatial_cols].dropna()
+    tab_sum_nona.ACC_NO = tab_sum_nona.ACC_NO.map(lambda x: x.replace(".1",
+                                                                      ""))
+    tab_sum_nona.START = tab_sum_nona.START.map(lambda x: str(x).replace(".0",
+                                                                         ""))
+    tab_sum_nona.END = tab_sum_nona.END.map(lambda x: str(x).replace(".0",
+                                                                     ""))
+    return tab_sum_nona
 
 
 def main():
