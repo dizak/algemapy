@@ -2,7 +2,8 @@
 
 
 import argparse
-from Bio import Entrez, SeqIO, SeqRecord
+from Bio import Entrez, SeqIO, SeqRecord, Phylo
+import pandas as pd
 from tqdm import tqdm
 
 
