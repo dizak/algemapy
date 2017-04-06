@@ -6,6 +6,7 @@ import argparse
 import glob
 import pathos.multiprocessing as ptmp
 from Bio import SeqIO
+from Bio import Phylo as ph
 from tqdm import tqdm
 
 
@@ -63,12 +64,12 @@ def sanitize_names(input_file_name,
 
 def dots_read_names(input_file_name,
                     output_file_name,
-                    regex="\>\w\d+.+",
-                    repl_char=">."):
-    with open(input_file_name) as fin:
-        with open(output_file_name, "w") as fout:
-            for i in tqdm(fin.readlines()):
-                fout.write(re.sub(regex, repl_char, i))
+                    file_format="newick",
+                    repl_char="."):
+    tree = ph.read(input_file_name, file_format)
+    for i in tqdm(tree.find_clades()):
+        i.name = repl_char
+    ph.write(tree, output_file_name, file_format)
 
 
 def find_stop_codons(threshold,
