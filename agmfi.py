@@ -71,7 +71,6 @@ def dots_read_names(input_file_name,
                 fout.write(re.sub(regex, repl_char, i))
 
 
-
 def find_stop_codons(threshold,
                      records,
                      below_threshold=False):
