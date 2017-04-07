@@ -324,7 +324,7 @@ def main():
         if args.node_type is not None:
             node_type = args.node_type.upper()
         else:
-            node_type = "N"
+            node_type = args.node_type
         for name, left, right in reads:
             loaded_templ = load_template_file(get_dir_path("subscript.sh.jj2"))
             rendered_templ = render_template(loaded_templ,
@@ -347,7 +347,7 @@ def main():
         if args.node_type is not None:
             node_type = args.node_type.upper()
         else:
-            node_type = "N"
+            node_type = args.node_type
         loaded_templ = load_template_file(get_dir_path("sequential.sh.jj2"))
         rendered_templ = render_template(loaded_templ,
                                          files_directory=files_directory_abs,
@@ -362,7 +362,7 @@ def main():
         save_template("{0}.sh".format(args.job_name),
                       rendered_templ)
         if args.dry_run is False:
-            os.system("sh {0}".format(args.output_file_name))
+            os.system("sh {0}".format("{0}.sh".format(args.job_name)))
     else:
         print "Unknow command for submitting the job. Quitting..."
 
