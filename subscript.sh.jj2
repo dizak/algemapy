@@ -18,7 +18,7 @@ flash {{files_directory}}{{left}} {{files_directory}}{{right}} -o {{name}}
 echo 'DONE!'
 ### ORF filtering ###
 echo 'ORFs filtering...'
-agmfi.py {{files_directory}}{{name}}.extendedFrags.fastq
+agmfi.py {{files_directory}}{{name}}.extendedFrags.fastq --output {{files_directory}}{{name}}.extendedFrags.fasta
 echo 'DONE!'
 {% if concat_reference %}
 ### Concatenating with the reference ###
@@ -31,11 +31,13 @@ mafft --thread {{processors}} {{files_directory}}{{name}}.extendedFrags.{% if co
 echo 'Building tree...'
 {{ml_software}} -s {{files_directory}}{{name}}.mafft -nt {{processors}}
 {% if map_reference %}
+echo 'Replacing reads names with dots'
+agmfi {{files_directory}}{{name}}.mafft.treefile --output {{files_directory}}{{name}}.mafft.dot.treefile --dotize-only
 echo 'Mapping tree on the reference'
-mgremap -G {{map_reference}} -S {{files_directory}}{{name}}.mafft.treefile -o {{files_directory}}{{name}}.mgremap -m {{files_directory}}{{name}}.mapping -d {{files_directory}}{{name}}.dist -C {{files_directory}}{{name}}.csv -z {{files_directory}}{{name}}.dot
+mgremap -G {{map_reference}} -S {{files_directory}}{{name}}.mafft.dot.treefile -o {{files_directory}}{{name}}.mgremap -m {{files_directory}}{{name}}.mapping -d {{files_directory}}{{name}}.dist -C {{files_directory}}{{name}}.csv -z {{files_directory}}{{name}}.dot
 {% endif %}
 echo 'DONE!'
 {% if notify_email %}
 echo 'Sending notification...'
-headnode_notifier.py {{notify_email}} --subject '{{job_name}} has finished'
+headnode_notifier.py {{notify_email}} --subject '{{name}} has finished'
 {% endif %}

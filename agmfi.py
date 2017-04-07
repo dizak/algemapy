@@ -62,13 +62,13 @@ def sanitize_names(input_file_name,
         fout.writelines(corrected_file)
 
 
-def dots_read_names(input_file_name,
-                    output_file_name,
-                    file_format="newick",
-                    repl_char="."):
+def dots4names(input_file_name,
+               output_file_name,
+               file_format="newick",
+               wanted_char="."):
     tree = ph.read(input_file_name, file_format)
     for i in tqdm(tree.find_clades()):
-        i.name = repl_char
+        i.name = wanted_char
     ph.write(tree, output_file_name, file_format)
 
 
@@ -99,46 +99,46 @@ def find_stop_codons(threshold,
         return above_thr
 
 
-def conv_n_filter(input_file,
-                  output_path=".",
+def conv_n_filter(input_file_name,
+                  output_file_name,
+                  input_format="fastq",
+                  output_format="fasta",
                   max_stop_codons=3,
                   multiprocessing=False):
     def f(i):
         print "Processing {}...".format(i)
-        records_list = list(SeqIO.parse(i, format="fastq"))
+        records_list = list(SeqIO.parse(i, format=input_format))
         filtered = find_stop_codons(threshold=max_stop_codons,
                                     records=records_list)
-        file_name_fasta = "{0}.fasta".format(".".join(i.split("/")[-1].split(".")[:-1]))
-        with open("{0}/{1}".format(output_path, file_name_fasta), "w") as fout:
-            SeqIO.write(filtered, fout, format="fasta")
+        with open(output_file_name, "w") as fout:
+            SeqIO.write(filtered, fout, format=output_format)
         print "DONE!"
     if multiprocessing is True:
-        ptmp.ProcessPool().map(sanitize_names, input_file)
-        ptmp.ProcessingPool().map(f, input_file)
+        ptmp.ProcessPool().map(sanitize_names, input_file_name)
+        ptmp.ProcessingPool().map(f, input_file_name)
     else:
-        sanitize_names(input_file, input_file)
-        f(input_file)
+        sanitize_names(input_file_name, input_file_name)
+        f(input_file_name)
 
 
 def main():
     parser = argparse.ArgumentParser(prog="agmfi",
-                                     usage="agmfi.py [OPTION]",
+                                     usage="agmfi.py [FILE] [OPTION]",
                                      description="Part of \
                                      ALternativeGEnomicMAppingPYpeline.\
                                      Holds algemapy built-in filtering.",
                                      version="testing")
     parser.add_argument(action="store",
-                        dest="files_directory",
+                        dest="input_file",
                         metavar="",
-                        help="Input directory path.")
+                        help="Input file.")
     parser.add_argument("-o",
                         "--output",
                         action="store",
-                        dest="output_path",
+                        dest="output_file_name",
                         metavar="",
-                        default=".",
-                        help="Output directory path. Default: working\
-                        directory")
+                        required=True,
+                        help="Output file name.")
     parser.add_argument("-s",
                         "--sanitize-only",
                         action="store",
@@ -147,19 +147,39 @@ def main():
                         default=None,
                         help="Use if you just want to remove specified\
                         character from the file.")
+    parser.add_argument("-d",
+                        "--dotize-only",
+                        action="store",
+                        dest="dotize_only",
+                        metavar="",
+                        default=None,
+                        help="Use if you just want to replace read names\
+                        with dots in the tree.")
     args = parser.parse_args()
 
     if args.sanitize_only is not None:
-        sanitize_names(input_file_name=args.files_directory,
-                       output_file_name=args.output_path,
+        sanitize_names(input_file_name=args.input_file,
+                       output_file_name=args.output_file_name,
                        leading_char="",
                        unwanted_char=args.sanitize_only,
                        wanted_char="")
         exit()
     else:
         pass
-    conv_n_filter(input_file=args.files_directory,
-                  output_path=args.output_path)
+    if args.dotize_only is not None:
+        dots4names(input_file_name=args.input_file,
+                   output_file_name=args.dotize_only,
+                   file_format="newick",
+                   wanted_char=".")
+        exit()
+    else:
+        pass
+    conv_n_filter(input_file_name=args.input_file,
+                  output_file_name=args.output_file_name,
+                  input_format="fastq",
+                  output_format="fasta",
+                  max_stop_codons=3,
+                  multiprocessing=False)
 
 
 if __name__ == '__main__':
