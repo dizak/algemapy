@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 
 
+import os
 import re
 import argparse
 from Bio import Entrez, SeqIO, SeqRecord, Phylo
@@ -68,7 +69,9 @@ def gene_tab_sum_reform(input_file_name,
 
 def gene_seq_dwn(output_file_name,
                  sum_df,
-                 rettype="fasta"):
+                 rettype="fasta",
+                 email="headnode.notify@gmail.com"):
+    Entrez.email = email
     with open(output_file_name, "w") as fout:
         for i in tqdm(sum_df.itertuples()):
             id = getattr(i, "ACC_NO")
@@ -101,35 +104,56 @@ def gene_sanit_desc(input_file_name,
 
 def main():
     parser = argparse.ArgumentParser(prog="agmdbf",
-                                     usage="agmdbf.py [FILE] [OPTION]",
+                                     usage="agmdbf.py [OPTION]",
                                      description="Part of \
                                      ALternativeGEnomicMAppingPYpeline.\
                                      Holds algemapy built-in database\
                                      formatting.",
                                      version="testing")
-    parser.add_argument(action="store",
-                        dest="files_directory",
-                        metavar="",
-                        help="Input file path.")
     parser.add_argument("-o",
                         "--output",
                         action="store",
-                        dest="output_path",
+                        dest="output_file_name",
                         metavar="",
-                        default=".",
-                        help="Output file path. Default: working\
-                        directory")
-    parser.add_argument("--download",
+                        required=True,
+                        help="Output file name.")
+    parser.add_argument("--download-from-tab-summary",
+                        action="store",
+                        dest="dwn_from_tab_sum",
+                        metavar="",
+                        default=None,
+                        help="Download genes from nucleotide database by\
+                        entries from Gene tabular summary.")
+    parser.add_argument("--leave-raw",
                         action="store_true",
-                        dest="download",
+                        dest="leave_raw",
                         default=False,
-                        help="Use if you want to download database.")
+                        help="Do not remove raw file downloaded from\
+                        nucleotide db.")
     args = parser.parse_args()
-    if args.download is True:
-        db_dwn(db="nucleotide",
-               term="pheS[Gene] AND Lactobacillaceae [Orgn]",
-               output_file_name=args.output_path)
-    id_reform(args.files_directory, args.output_path)
+
+    if args.dwn_from_tab_sum is not None:
+        raw_seqs_file_name = "raw.{}".format(args.output_file_name)
+        print "Reformatting Gene database tabular summary..."
+        gene_tab_sum = gene_tab_sum_reform(input_file_name=args.dwn_from_tab_sum,
+                                           sep="\t",
+                                           cols2rename={"genomic_nucleotide_accession.version":
+                                                        "ACC_NO",
+                                                        "start_position_on_the_genomic_accession":
+                                                        "START",
+                                                        "end_position_on_the_genomic_accession":
+                                                        "END"},
+                                           essenatial_cols=["ACC_NO", "START", "END"])
+        print "Downloading sequences by ID and coordinates from Gene database tabular summary..."
+        gene_seq_dwn(output_file_name=raw_seqs_file_name,
+                     sum_df=gene_tab_sum,
+                     rettype="fasta")
+        print "Removing unwanted part of sequences names..."
+        gene_sanit_desc(input_file_name=raw_seqs_file_name,
+                        output_file_name=args.output_file_name,
+                        file_format="fasta")
+        if args.leave_raw is False:
+            os.remove(raw_seqs_file_name)
 
 
 if __name__ == '__main__':
