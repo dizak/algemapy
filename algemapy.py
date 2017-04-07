@@ -296,20 +296,20 @@ def main():
                           available. Default <None>")
     args = parser.parse_args()
 
-    with open("{}{}.{}{}{}{}{}{}".format(args.files_directory,
-                                         args.job_name,
-                                         time.localtime().tm_year,
-                                         time.localtime().tm_mon,
-                                         time.localtime().tm_mday,
-                                         time.localtime().tm_hour,
-                                         time.localtime().tm_min,
-                                         time.localtime().tm_sec),
+    files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
+    with open("{}.{}.{}{}{}{}{}{}.log".format(files_directory_abs,
+                                              args.job_name,
+                                              time.localtime().tm_year,
+                                              time.localtime().tm_mon,
+                                              time.localtime().tm_mday,
+                                              time.localtime().tm_hour,
+                                              time.localtime().tm_min,
+                                              time.localtime().tm_sec),
               "a") as fin:
         fin.write("{} was called with these arguments:\n\n".format(sys.argv[0]))
         for k, v in vars(args).iteritems():
             if v is not None:
                 fin.write("--{}: {}\n".format(k, v))
-    files_directory_abs = "{0}/".format(os.path.abspath(args.files_directory))
     reads = zip(left_n_right_generator(files_directory_abs,
                                        files_extension="fastq",
                                        return_only="name"),
