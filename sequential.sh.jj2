@@ -43,7 +43,7 @@ echo 'Building tree...'
 {% if map_reference %}
 echo 'Replacing reads names with dots'
   {% for name, left, right in reads %}
-agmfi {{files_directory}}{{name}}.mafft.treefile --output {{files_directory}}{{name}}.mafft.dot.treefile --dotize-only
+agmfi.py {{files_directory}}{{name}}.mafft.treefile --output {{files_directory}}{{name}}.mafft.dot.treefile --dotize-only
   {% endfor %}
 echo 'Mapping tree on the reference'
   {% for name, left, right in reads %}

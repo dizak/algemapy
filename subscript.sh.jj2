@@ -32,7 +32,7 @@ echo 'Building tree...'
 {{ml_software}} -s {{files_directory}}{{name}}.mafft -nt {{processors}}
 {% if map_reference %}
 echo 'Replacing reads names with dots'
-agmfi {{files_directory}}{{name}}.mafft.treefile --output {{files_directory}}{{name}}.mafft.dot.treefile --dotize-only
+agmfi.py {{files_directory}}{{name}}.mafft.treefile --output {{files_directory}}{{name}}.mafft.dot.treefile --dotize-only
 echo 'Mapping tree on the reference'
 mgremap -G {{map_reference}} -S {{files_directory}}{{name}}.mafft.dot.treefile -o {{files_directory}}{{name}}.mgremap -m {{files_directory}}{{name}}.mapping -d {{files_directory}}{{name}}.dist -C {{files_directory}}{{name}}.csv -z {{files_directory}}{{name}}.dot
 {% endif %}
