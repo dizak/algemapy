@@ -209,7 +209,7 @@ def left_n_right_generator(files_directory=".",
 
 def main():
     parser = argparse.ArgumentParser(prog="algemapy",
-                                     usage="algemapy.py [OPTION]",
+                                     usage="algemapy.py [FILE] [OPTION]",
                                      description="ALternativeGEnomicMAppingPYpeline.\
                                                   Facilitates non-16S markers\
                                                   analysis.",
