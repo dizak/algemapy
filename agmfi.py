@@ -66,6 +66,21 @@ def dots4names(input_file_name,
                output_file_name,
                file_format="newick",
                wanted_char="."):
+    """
+    Replace read names with dot or other desired character. Uses Bio.Phylo
+    module.
+
+    Parameters
+    -------
+    input_file_name: str
+        Path to input file.
+    output_file_name: str
+        Path to output file.
+    file_format: str
+        Input and output file format. Default <newick>.
+    wanted_char: str
+        Charater to replace read names with.
+    """
     tree = ph.read(input_file_name, file_format)
     for i in tqdm(tree.find_clades()):
         i.name = wanted_char
