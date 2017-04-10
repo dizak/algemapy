@@ -151,7 +151,6 @@ def main():
                         "--dotize-only",
                         action="store_true",
                         dest="dotize_only",
-                        metavar="",
                         default=None,
                         help="Use if you just want to replace read names\
                         with dots in the tree.")
