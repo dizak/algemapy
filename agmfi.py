@@ -167,7 +167,7 @@ def main():
         pass
     if args.dotize_only is not None:
         dots4names(input_file_name=args.input_file,
-                   output_file_name=args.dotize_only,
+                   output_file_name=args.output_file_name,
                    file_format="newick",
                    wanted_char=".")
         exit()
