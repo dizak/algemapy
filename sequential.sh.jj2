@@ -47,7 +47,7 @@ agmfi.py {{files_directory}}{{name}}.mafft.treefile --output {{files_directory}}
   {% endfor %}
 echo 'Mapping tree on the reference'
   {% for name, left, right in reads %}
-mgremap -G {{map_reference}} -S {{files_directory}}{{name}}.mafft.dot.treefile -o {{files_directory}}{{name}}.mgremap -m {{files_directory}}{{name}}.mapping -d {{files_directory}}{{name}}.dist -C {{files_directory}}{{name}}.csv -z {{files_directory}}{{name}}.dot
+mgremap -S {{map_reference}} -G {{files_directory}}{{name}}.mafft.dot.treefile -o {{files_directory}}{{name}}.mgremap -m {{files_directory}}{{name}}.mapping -d {{files_directory}}{{name}}.dist -C {{files_directory}}{{name}}.csv -z {{files_directory}}{{name}}.dot
   {% endfor %}
 {% endif %}
 echo 'DONE!'
