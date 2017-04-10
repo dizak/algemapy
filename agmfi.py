@@ -149,7 +149,7 @@ def main():
                         character from the file.")
     parser.add_argument("-d",
                         "--dotize-only",
-                        action="store",
+                        action="store_true",
                         dest="dotize_only",
                         metavar="",
                         default=None,
@@ -157,7 +157,7 @@ def main():
                         with dots in the tree.")
     args = parser.parse_args()
 
-    if args.sanitize_only is not None:
+    if args.sanitize_only is True:
         sanitize_names(input_file_name=args.input_file,
                        output_file_name=args.output_file_name,
                        leading_char="",
