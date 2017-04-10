@@ -68,7 +68,7 @@ def dots4names(input_file_name,
                wanted_char="."):
     """
     Replace read names with dot or other desired character. Uses Bio.Phylo
-    module.
+    module. Write results to file.
 
     Parameters
     -------
@@ -80,11 +80,6 @@ def dots4names(input_file_name,
         Input and output file format. Default <newick>.
     wanted_char: str
         Charater to replace read names with.
-
-    Returns
-    -------
-    file object
-        Phylogenetic tree with modified clade names.
     """
     tree = ph.read(input_file_name, file_format)
     for i in tqdm(tree.find_clades()):
@@ -92,16 +87,40 @@ def dots4names(input_file_name,
     ph.write(tree, output_file_name, file_format)
 
 
-def find_stop_codons(threshold,
-                     records,
+def find_stop_codons(records,
+                     threshold,
+                     stop_sign="*",
                      below_threshold=False):
+    """
+    Filter out (high- or lowpass) Bio.SeqRecord.SeqRecord depending on
+    specified number of stop codons found in the translation of all potential\
+    ORFs.
+
+    Parameters
+    -------
+    records: list of Bio.SeqRecord.SeqRecord
+        Records to processes.
+    threshold: into
+        Maximum number of stop codons allowed.
+    stop_sign: str
+        Representation of stop codon. Default: <*>.
+    below_threshold: bool
+        Save records below or above threshold. Default: <False>.
+
+    Returns
+    -------
+    below_thr: list of Bio.SeqRecord.SeqRecord
+        Records with smaller number of stop codons than threshold.
+    above_thr: list of Bio.SeqRecord.SeqRecord
+        Records with greater number of stop codons than threshold.
+    """
     below_thr = []
     above_thr = []
     for i in tqdm(records):
         fr_ORFs = [i.seq[x:].translate(table=11) for x in range(3)]
         rv_ORFs = [i.seq.reverse_complement()[x:].translate(table=11) for x in range(3)]
         all_ORFs = fr_ORFs + rv_ORFs
-        if all(all_ORFs[x].count("*") > threshold for x in range(6)):
+        if all(all_ORFs[x].count(stop_sign) > threshold for x in range(6)):
             below_thr.append(i)
         else:
             above_thr.append(i)
