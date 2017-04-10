@@ -80,6 +80,11 @@ def dots4names(input_file_name,
         Input and output file format. Default <newick>.
     wanted_char: str
         Charater to replace read names with.
+
+    Returns
+    -------
+    file object
+        Phylogenetic tree with modified clade names.
     """
     tree = ph.read(input_file_name, file_format)
     for i in tqdm(tree.find_clades()):
