@@ -144,6 +144,26 @@ def conv_n_filter(input_file_name,
                   output_format="fasta",
                   max_stop_codons=3,
                   multiprocessing=False):
+    """
+    Convert sequences from file to another format, replace <:> from read names\
+    with <_> and filter out those with number of stop codons above maximum\
+    value. Write results to file.
+
+    Parameters
+    -------
+    input_file_name: str
+        Path to input file.
+    output_file_name: str
+        Path to output file.
+    input_format: str
+        Input file format. Default <fastq>.
+    output_format: str
+        Output file format. Default <fasta>.
+    max_stop_codons: int
+        Maximum value of stop codons allowed. Default: <3>.
+    multiprocessing: bool
+        Experimental. Use all the cores on a given machine. Default <False>.
+    """
     def f(i):
         print "Processing {}...".format(i)
         records_list = list(SeqIO.parse(i, format=input_format))
