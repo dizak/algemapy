@@ -33,8 +33,17 @@ Python pipeline for mapping alternative genome markers onto phylogenetic tree.
 ###### Formatting the database:
   1. Reference tree:
     * Format: phylip.
-    * Download source: [NCBI Taxonomy Browser](https://www.ncbi.nlm.nih.gov/taxonomy):
+    * Download source: [NCBI Taxonomy](https://www.ncbi.nlm.nih.gov/taxonomy):
       1. Search for taxonomy group of interest using [Organism] field.
       2. Display results as common tree. This will redirect you to NCBI Taxonomy Browser.
       3. Check group of interest and click Choose.
       4. Save file as phylip.
+  2. Reference genes:
+    * Format: tsv.
+    * Download source: [NCBI Gene](https://www.ncbi.nlm.nih.gov/gene/):
+      1. Search for gene of interest within taxonomy group of interest using [Gene] and [Organism] fields.
+      2. Send to file in Tabular (text) format.
+      3. Download genes by ids and coordinates using
+      ```
+
+      ```
