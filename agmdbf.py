@@ -43,6 +43,38 @@ def id_reform(input_file_name,
             SeqIO.write(record, fout, "fasta")
 
 
+def sanitize_ref_clade(line,
+                       bad_words=["bacterium",
+                                  "miscellaneous",
+                                  "sp."]):
+    it = iter(line.split(" "))
+    genus = None
+    species = None
+    bad_words = bad_words
+    for i in it:
+        if i.istitle() is True and any([x.isdigit() for x in i]) is False:
+            genus = i
+            species = next(it, None)
+    if species and genus is not None:
+        if any(i in species for i in bad_words) is True:
+            return genus
+        else:
+            return "{} {}\n".format(genus, species)
+    elif genus is not None and species is None:
+        return genus
+    else:
+        return "unknown"
+
+
+def sanitize_ref_tree(input_file_name,
+                      output_file_name,
+                      file_format="newick"):
+    tree = Phylo.read(input_file_name, file_format)
+    for i in tree.find_clades():
+        i.name = sanitize_ref_clade(i.name)
+    Phylo.write(tree, output_file_name, file_format)
+
+
 def gene_tab_sum_reform(input_file_name,
                         sep="\t",
                         cols2rename={"genomic_nucleotide_accession.version":
@@ -127,6 +159,12 @@ def main():
                         default=False,
                         help="Download genes from nucleotide database by\
                         entries from Gene tabular summary.")
+    parser.add_argument("--sanitize-ref-tree",
+                        action="store_true",
+                        dest="sanitize_ref_tree",
+                        default=False,
+                        help="Sanitize reference tree by leaving just\
+                        taxonomical names.")
     parser.add_argument("--leave-raw",
                         action="store_true",
                         dest="leave_raw",
@@ -157,6 +195,14 @@ def main():
                         file_format="fasta")
         if args.leave_raw is False:
             os.remove(raw_seqs_file_name)
+        print "Done!"
+        exit()
+    if args.sanitize_ref_tree is True:
+        sanitize_ref_tree(input_file_name=args.input_file_name,
+                          output_file_name=args.output_file_name,
+                          file_format="newick")
+        print "Done!"
+        exit()
 
 
 if __name__ == '__main__':
