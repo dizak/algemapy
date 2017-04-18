@@ -67,8 +67,8 @@ def gene_tab_sum_reform(input_file_name,
     return tab_sum_nona
 
 
-def gene_seq_dwn(output_file_name,
-                 sum_df,
+def gene_seq_dwn(sum_df,
+                 output_file_name,
                  rettype="fasta",
                  email="headnode.notify@gmail.com"):
     Entrez.email = email
@@ -104,12 +104,16 @@ def gene_sanit_desc(input_file_name,
 
 def main():
     parser = argparse.ArgumentParser(prog="agmdbf",
-                                     usage="agmdbf.py [OPTION]",
+                                     usage="agmdbf.py [FILE] [OPTION]",
                                      description="Part of \
                                      ALternativeGEnomicMAppingPYpeline.\
                                      Holds algemapy built-in database\
                                      formatting.",
                                      version="testing")
+    parser.add_argument(action="store",
+                        dest="input_file_name",
+                        metavar="",
+                        help="Input file path.")
     parser.add_argument("-o",
                         "--output",
                         action="store",
@@ -118,10 +122,9 @@ def main():
                         required=True,
                         help="Output file name.")
     parser.add_argument("--download-from-tab-summary",
-                        action="store",
+                        action="store_true",
                         dest="dwn_from_tab_sum",
-                        metavar="",
-                        default=None,
+                        default=False,
                         help="Download genes from nucleotide database by\
                         entries from Gene tabular summary.")
     parser.add_argument("--leave-raw",
@@ -132,10 +135,10 @@ def main():
                         nucleotide db.")
     args = parser.parse_args()
 
-    if args.dwn_from_tab_sum is not None:
+    if args.dwn_from_tab_sum is True:
         raw_seqs_file_name = "raw.{}".format(args.output_file_name)
         print "Reformatting Gene database tabular summary..."
-        gene_tab_sum = gene_tab_sum_reform(input_file_name=args.dwn_from_tab_sum,
+        gene_tab_sum = gene_tab_sum_reform(input_file_name=args.input_file_name,
                                            sep="\t",
                                            cols2rename={"genomic_nucleotide_accession.version":
                                                         "ACC_NO",
@@ -145,8 +148,8 @@ def main():
                                                         "END"},
                                            essenatial_cols=["ACC_NO", "START", "END"])
         print "Downloading sequences by ID and coordinates from Gene database tabular summary..."
-        gene_seq_dwn(output_file_name=raw_seqs_file_name,
-                     sum_df=gene_tab_sum,
+        gene_seq_dwn(sum_df=gene_tab_sum,
+                     output_file_name=raw_seqs_file_name,
                      rettype="fasta")
         print "Removing unwanted part of sequences names..."
         gene_sanit_desc(input_file_name=raw_seqs_file_name,
