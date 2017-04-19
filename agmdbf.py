@@ -121,16 +121,22 @@ def gene_seq_dwn(sum_df,
 
 def gene_sanit_desc(input_file_name,
                     output_file_name,
-                    file_format):
-    def f(x):
-        x_split = x.split(" ")[1:3]
-        x_split_str = " ".join(x_split)
-        return x_split_str
+                    file_format,
+                    sep="_",
+                    increment=True):
+    count = 0
     with open(input_file_name) as fin:
         with open(output_file_name, "w") as fout:
             for i in tqdm(SeqIO.parse(fin, file_format)):
+                if increment is True:
+                    count += 1
                 i.id = ""
-                i.description = f(i.description)
+                desc_split = i.description.split(" ")[1:3]
+                desc_split_str = sep.join(desc_split)
+                if increment is True:
+                    i.description = "{}_{}".format(desc_split_str, count)
+                else:
+                    i.description = "{}".format(desc_split_str)
                 SeqIO.write(i, fout, file_format)
 
 
@@ -192,7 +198,9 @@ def main():
         print "Removing unwanted part of sequences names..."
         gene_sanit_desc(input_file_name=raw_seqs_file_name,
                         output_file_name=args.output_file_name,
-                        file_format="fasta")
+                        file_format="fasta",
+                        sep=sep,
+                        increment=True)
         if args.leave_raw is False:
             os.remove(raw_seqs_file_name)
         print "Done!"
