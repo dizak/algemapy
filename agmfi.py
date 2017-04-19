@@ -1,6 +1,8 @@
 #! /usr/bin/env python
 
 
+import sys
+import warnings
 import re
 import argparse
 import glob
@@ -65,7 +67,8 @@ def sanitize_names(input_file_name,
 def dots4names(input_file_name,
                output_file_name,
                file_format="newick",
-               wanted_char="."):
+               wanted_char=".",
+               rec_lim=10000):
     """
     Replace read names with dot or other desired character. Uses Bio.Phylo
     module. Write results to file.
@@ -82,6 +85,9 @@ def dots4names(input_file_name,
         Charater to replace read names with.
     """
     tree = ph.read(input_file_name, file_format)
+    warnings.warn("Recursion limit set to {}".format(rec_lim),
+                  UserWarning)
+    sys.setrecursionlimit(rec_lim)
     for i in tqdm(tree.find_clades()):
         i.name = wanted_char
     ph.write(tree, output_file_name, file_format)
@@ -228,7 +234,8 @@ def main():
         dots4names(input_file_name=args.input_file,
                    output_file_name=args.output_file_name,
                    file_format="newick",
-                   wanted_char=".")
+                   wanted_char=".",
+                   rec_lim=10000)
         exit()
     else:
         pass
