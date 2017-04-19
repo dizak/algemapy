@@ -199,7 +199,7 @@ def main():
         gene_sanit_desc(input_file_name=raw_seqs_file_name,
                         output_file_name=args.output_file_name,
                         file_format="fasta",
-                        sep=sep,
+                        sep="_",
                         increment=True)
         if args.leave_raw is False:
             os.remove(raw_seqs_file_name)
