@@ -232,13 +232,6 @@ def main():
                         default="algemapy.job",
                         help="Job name. Used for naming scripts, queued job\
                         and output. Default <algemapy.job>.")
-    parser.add_argument("-o",
-                        "--output",
-                        action="store",
-                        dest="output_file_name",
-                        metavar="",
-                        default="preproc.sh",
-                        help="Output file name. Default <preproc.sh>.")
     parser.add_argument("--notify-email",
                         action="store",
                         dest="notify_email",
