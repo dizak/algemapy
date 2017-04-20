@@ -1,14 +1,5 @@
-name: algemapy
-channels: !!python/tuple
-- !!python/unicode
-  'conda-forge'
-- !!python/unicode
-  'defaults'
-- !!python/unicode
-  'mpi4py'
-- !!python/unicode
-  'bioconda'
 dependencies:
+- bioconda::mafft=7.305=0
 - biopython=1.68=np112py27_0
 - conda-forge::ca-certificates=2017.1.23=0
 - conda-forge::certifi=2017.1.23=py27_0
@@ -36,5 +27,3 @@ dependencies:
 - conda-forge::zlib=1.2.11=0
 - mkl=2017.0.1=0
 - numpy=1.12.1=py27_0
-prefix: /home/dizak/anaconda2/envs/algemapy
-
