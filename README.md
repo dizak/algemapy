@@ -5,17 +5,15 @@ Python pipeline for mapping alternative genome markers onto phylogenetic tree.
 ### Installation
 
 1. Requirements.
-  * os
-  * sys
-  * glob
-  * re
-  * time
-  * argparse
-  * tqdm
-  * pathos
-  * Biopython
-  * jinja2
-  * pandas
+  * conda users: install dependencies with
+
+  ```
+  conda env create --file /path/to/algemapy.yaml -p /your/path/to/env/
+  ```
+
+  This environment includes mafft.
+
+  * non-conda users: install dependencies listed in algemapy.yaml by any other means.
 
 2. External scripts/programs.
   * [FLASH](https://ccb.jhu.edu/software/FLASH/)
