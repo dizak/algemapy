@@ -17,7 +17,10 @@ Python pipeline for mapping alternative genome markers onto phylogenetic tree.
   conda env create --file /path/to/algemapy.yaml -p /your/path/to/env/
   ```
 
-  This environment includes mafft.
+  This environment includes:
+
+  * mafft
+  * iqtree
 
   * non-conda users: install dependencies listed in algemapy.yaml by any other means.
 
