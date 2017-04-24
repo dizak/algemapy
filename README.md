@@ -8,11 +8,6 @@ Python pipeline for mapping alternative genome markers onto phylogenetic tree.
   * conda users: install dependencies with
 
   ```
-  conda env create --file /path/to/algemapy.yaml
-  ```
-  or if you have access restrictions (eg. anaconda is installed system-wide)
-
-  ```
   conda env create --file /path/to/algemapy.yaml -p /your/path/to/env/
   ```
 
