@@ -42,6 +42,11 @@ Python pipeline for mapping alternative genome markers onto phylogenetic tree.
       2. Display results as common tree. This will redirect you to NCBI Taxonomy Browser.
       3. Check group of interest and click Choose.
       4. Save file as phylip.
+    * Sanitize the reference tree using:
+
+    ```
+    agmdbf.py downloaded_tree.phy --output formatted_tree.phy --sanitize-ref-tree
+    ```
   2. Reference genes:
     * Format: tsv.
     * Download source: [NCBI Gene](https://www.ncbi.nlm.nih.gov/gene/):
@@ -49,5 +54,5 @@ Python pipeline for mapping alternative genome markers onto phylogenetic tree.
       2. Send to file in Tabular (text) format.
       3. Download genes by ids and coordinates using
       ```
-
+      agmdbf.py tabular_summary.txt --output reference_genes_sequences.fasta --download-from-tab-summary
       ```
