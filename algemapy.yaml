@@ -1,6 +1,7 @@
 name: algemapy
 dependencies:
 - bioconda::mafft=7.305=0
+- bioconda::iqtree=1.5.3
 - biopython=1.68=np112py27_0
 - conda-forge::ca-certificates=2017.1.23=0
 - conda-forge::certifi=2017.1.23=py27_0
