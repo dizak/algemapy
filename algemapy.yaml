@@ -1,3 +1,4 @@
+name: algemapy
 dependencies:
 - bioconda::mafft=7.305=0
 - biopython=1.68=np112py27_0
