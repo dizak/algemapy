@@ -43,7 +43,6 @@ Python pipeline for mapping alternative genome markers onto phylogenetic tree.
       3. Check group of interest and click Choose.
       4. Save file as phylip.
     * Sanitize the reference tree using:
-
     ```
     agmdbf.py downloaded_tree.phy --output formatted_tree.phy --sanitize-ref-tree
     ```
