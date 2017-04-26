@@ -71,7 +71,7 @@ def sanitize_ref_tree(input_file_name,
                       file_format="newick",
                       remove_whtspc=True):
     tree = Phylo.read(input_file_name, file_format)
-    for i in tree.find_clades():
+    for i in tqdm(tree.find_clades()):
         if remove_whtspc is True:
             i.name = sanitize_ref_clade(i.name).replace(" ", "_")
         else:
